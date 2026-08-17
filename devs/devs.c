@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 22:23:45 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/17 23:35:18 by bastien          ###   ########.fr       */
+/*   Updated: 2026/08/17 23:39:39 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void print_base_infos(t_dev coders, int j)
+void	print_base_infos(t_dev coders, int j)
 {
 	printf("Coder %d:\n", j + 1);
 	printf("	numbers: %d\n", coders.nb);
@@ -23,7 +23,7 @@ void print_base_infos(t_dev coders, int j)
 
 void	print_devs_infos(t_dev *coders, int len)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	printf("nb coders: %d\n", len);
@@ -42,7 +42,6 @@ void	print_devs_infos(t_dev *coders, int len)
 	printf("	has_doggle right: %d\n", coders[0].has_doggle);
 	printf("	has_doggle left: %d\n", coders[j].has_doggle);
 }
-
 
 int	set_up_dev(int *options)
 {
