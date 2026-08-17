@@ -1,33 +1,35 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bastien <email>                            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/17 11:27:27 by bastien           #+#    #+#             */
+/*   Updated: 2026/08/17 11:47:53 by bastien          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "errors.h"
 #include "parsing/parsing.h"
 
-const Errors ERR  ={
-  .err_0 = "Numbers cannot be negatives\n",
-  .err_1 = "is not a number\n",
-  .err_2 = "You do not have 8 positive ints\n",
+const t_errors	g_err = {
+	.err_0 = "ERROR:\nNumbers cannot be negatives\n",
+	.err_1 = "ERROR:\nNot all args are ints\n",
+	.err_2 = "ERROR:\nYou do not have 8 positive ints\n",
 };
 
-int main(int argc, char* argv[])
+int	main(int argc, char *argv[])
 {
-  int options[argc];
-  int j;
-  int i;
+	int	*options;
+	options = malloc(sizeof(int) * argc);
+	if (options == NULL)
+		return (1);
 
-  j = 0;
-  i = 1;
-  while (i != argc)
-  {
-    if (is_int(argv[i], ERR) == 0)
-      options[j] = atoi(argv[i]);
-    j++;
-    i++;
-  }
-  if (get_len(options) != 8)
-  {
-    printf("%s", ERR.err_2);
-    exit(1);
-  }
-  return 0;
-} 
+	parsing(argc, argv, options);
+
+	for (int i = 0; i<get_len(options); i++)
+		printf("%d", options[i]);
+}
