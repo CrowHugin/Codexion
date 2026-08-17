@@ -25,7 +25,14 @@ int	get_len(int *ptr_tab)
 	return (i);
 }
 
-int	is_int(char	*src, t_errors Err)
+int is_pos(int nb)
+{
+  if (nb < 0)
+    return 1;
+  return 0;
+}
+
+int	is_int(char	*src)
 {
 	int	len;
 	int	j;
@@ -34,19 +41,11 @@ int	is_int(char	*src, t_errors Err)
 	j = 0;
 	while (j < len)
 	{
-		if (src[0] == '-')
-		{
-			printf("%s", Err.err_0);
-			exit(1);
-		}
-		else if (src[j] < 48 || src[j] > 57)
-		{
-			printf("%s", Err.err_1);
-			exit(1);
-		}
+		if ((src[0] != '+' && src[0] != '-') && (src[j] < 48 || src[j] > 57))
+      return (0);
 		j++;
 	}
-	return (0);
+	return (1);
 }
 
 int	*parsing(int	argc, char	*argv[], int	*options)
@@ -58,14 +57,27 @@ int	*parsing(int	argc, char	*argv[], int	*options)
 	i = 1;
 	while (i != argc)
 	{
-		if (is_int(argv[i], g_err) == 0)
+    if (argv[i][0] == '-' && is_int(argv[i] + 1))
+    {
+      printf("%s\n", g_err.err_0);
+			exit(1);
+    }
+    else if (argv[i][0] == '-' && !is_int(argv[i]))
+    {
+      printf("%s\n", g_err.err_1);
+			exit(1);
+    }
+    else if (argv[i][0] != '-' && is_int(argv[i]))
 		{
 			options[j] = atoi(argv[i]);
 			j++;
 			i++;
 		}
-		else
+    else
+    {
+      printf("%s\n", g_err.err_1);
 			exit(1);
+    }
 	}
 	if (get_len(options) != 8)
 	{
