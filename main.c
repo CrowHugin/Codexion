@@ -27,9 +27,7 @@ int	main(int argc, char *argv[])
 	options = malloc(sizeof(int) * argc);
 	if (options == NULL)
 		return (1);
-
 	parsing(argc, argv, options);
-
 	for (int i = 0; i<get_len(options); i++)
 		printf("%d", options[i]);
 }

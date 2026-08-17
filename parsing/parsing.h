@@ -17,6 +17,6 @@
 
 int	get_len(int	*ptr_tab);
 int	is_int(char	*src, t_errors ERR);
-int	*parsing(int	argc, char	*argv[], int	*options);
+int	*parsing(int argc, char *argv[], int *options);
 
 #endif
