@@ -12,4 +12,4 @@ run_error: build
 	./codexion 8 2 3 -4 5 6 7 uihg
 
 run: build
-	./codexion 3 2 3 4 5 6 7 8
+	./codexion 7 2 3 4 5 6 7 8
