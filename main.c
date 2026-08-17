@@ -10,10 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "errors.h"
 #include "parsing/parsing.h"
+#include "devs/dev_share.h"
 
 const t_errors	g_err = {
 	.err_0 = "ERROR:\nNumbers cannot be negatives\n",
@@ -23,11 +23,12 @@ const t_errors	g_err = {
 
 int	main(int argc, char *argv[])
 {
-	int	*options;
+	int		*options;
+
 	options = malloc(sizeof(int) * argc);
-	if (options == NULL)
+	if (!options)
 		return (1);
 	parsing(argc, argv, options);
-	for (int i = 0; i<get_len(options); i++)
-		printf("%d", options[i]);
+	set_up_dev(options);
+	free(options);
 }
