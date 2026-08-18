@@ -22,4 +22,6 @@ typedef struct s_errors
 }	t_errors;
 
 extern const t_errors	g_err;
+
+void print_error(const char *error);
 #endif
