@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "errors.h"
+#include "errors/errors.h"
 #include "parsing/parsing.h"
 #include "devs/dev_share.h"
 

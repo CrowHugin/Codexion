@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../errors.h"
+#include "../errors/errors.h"
 
 int	get_len(int *ptr_tab)
 {

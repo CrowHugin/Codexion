@@ -13,7 +13,7 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-# include "../errors.h"
+# include "../errors/errors.h"
 
 int	get_len(int	*ptr_tab);
 int	is_int(char	*src, t_errors ERR);

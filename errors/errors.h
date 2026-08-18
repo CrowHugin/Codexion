@@ -18,6 +18,7 @@ typedef struct s_errors
 	char	*err_0;
 	char	*err_1;
 	char	*err_2;
+  char  *err_3;
 }	t_errors;
 
 extern const t_errors	g_err;
