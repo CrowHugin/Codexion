@@ -6,11 +6,10 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 11:27:19 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/17 11:47:39 by bastien          ###   ########.fr       */
+/*   Updated: 2026/08/18 17:41:50 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../errors/errors.h"

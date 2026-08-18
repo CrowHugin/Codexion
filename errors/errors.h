@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 11:41:25 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/18 16:20:45 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/08/18 17:44:23 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ typedef struct s_errors
 	char	*err_1;
 	char	*err_2;
 	char	*err_3;
+	char	*err_4;
 }	t_errors;
 
 extern const t_errors	g_err;
