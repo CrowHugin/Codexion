@@ -62,17 +62,25 @@ void	parsing_helper(char *str, int *options, int *j)
 
 int	*parsing(int argc, char *argv[], int *options)
 {
+  char  *last_arg;
 	int	j;
 	int	i;
 
 	j = 0;
 	i = 1;
-	while (i != argc)
+  last_arg = argv[argc - 1];
+  if (strcmp(last_arg, "fifo") != 0 && strcmp(last_arg, "edf") != 0)
+  {
+    printf("%s\n", g_err.err_3);
+    exit(1);
+  }
+    
+	while (i != argc - 1)
 	{
 		parsing_helper(argv[i], options, &j);
 		i++;
 	}
-	if (get_len(options) != 8)
+	if (get_len(options) != 7)
 	{
 		printf("%s", g_err.err_2);
 		exit(1);

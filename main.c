@@ -19,6 +19,7 @@ const t_errors	g_err = {
 	.err_0 = "ERROR:\nNumbers cannot be negatives\n",
 	.err_1 = "ERROR:\nNot all args are ints\n",
 	.err_2 = "ERROR:\nYou do not have 8 positive ints\n",
+  .err_3 = "ERROR:\nLast arg is not \"fifo\" or \"edf\""
 };
 
 int	main(int argc, char *argv[])
@@ -29,6 +30,6 @@ int	main(int argc, char *argv[])
 	if (!options)
 		return (1);
 	parsing(argc, argv, options);
-	set_up_dev(options);
+	// set_up_dev(options);
 	free(options);
 }
