@@ -44,9 +44,9 @@ int	is_int(char	*src)
 void	parsing_helper(char *str, int *options, int *j)
 {
 	if (str[0] == '-' && is_int(str + 1))
-    print_error(g_err.err_0);
+		print_error(g_err.err_0);
 	else if (!is_int(str))
-    print_error(g_err.err_1);
+		print_error(g_err.err_1);
 	else if (str[0] != '-' && is_int(str))
 	{
 		options[*j] = atoi(str);
@@ -56,21 +56,21 @@ void	parsing_helper(char *str, int *options, int *j)
 
 int	*parsing(int argc, char *argv[], int *options)
 {
-  char  *last_arg;
-	int	j;
-	int	i;
+	char	*last_arg;
+	int		j;
+	int		i;
 
 	j = 0;
 	i = 1;
-  last_arg = argv[argc - 1];
-  if (strcmp(last_arg, "fifo") != 0 && strcmp(last_arg, "edf") != 0)
-    print_error(g_err.err_3);
+	last_arg = argv[argc - 1];
+	if (strcmp(last_arg, "fifo") != 0 && strcmp(last_arg, "edf") != 0)
+		print_error(g_err.err_3);
 	while (i != argc - 1)
 	{
 		parsing_helper(argv[i], options, &j);
 		i++;
 	}
 	if (get_len(options) != 7)
-    print_error(g_err.err_2);
+		print_error(g_err.err_2);
 	return (0);
 }
