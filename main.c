@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 11:27:27 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/17 11:47:53 by bastien          ###   ########.fr       */
+/*   Updated: 2026/08/18 16:15:59 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@ int	main(int argc, char *argv[])
 	if (!options)
 		return (1);
 	parsing(argc, argv, options);
-	// set_up_dev(options);
+	set_up_dev(options);
 	free(options);
 }

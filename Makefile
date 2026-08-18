@@ -3,6 +3,7 @@ OPTIONS = -Wall -Werror -Wextra
 SOURCES = main.c \
 					parsing/*.c \
 					devs/devs.c \
+					devs/devs_utils.c \
 					errors/errors.c
 NAME = codexion
 
