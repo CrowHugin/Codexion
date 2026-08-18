@@ -6,13 +6,14 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 17:28:30 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/18 17:13:19 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/08/18 17:31:57 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DEV_H
 # define DEV_H
 
+# include <pthread.h>
 typedef struct s_developper
 {
 	int			nb;
@@ -22,7 +23,7 @@ typedef struct s_developper
     STATE_DEBUG,
     STATE_REFACTOR
 	}state;
-	int	*thread;
+	pthread_t thread;
 }	t_dev;
 
 void	print_devs_infos(t_dev *coders, int len);

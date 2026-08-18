@@ -1,5 +1,5 @@
 CC = cc
-OPTIONS = -Wall -Werror -Wextra
+OPTIONS = -Wall -Werror -Wextra -pthread
 SOURCES = main.c \
 					parsing/*.c \
 					devs/devs.c \
