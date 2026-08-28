@@ -1,17 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   monitoring.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bastien <email>                            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/28 23:35:17 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/29 00:07:45 by bastien          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../devs/dev.h"
 #include "../errors/errors.h"
+#include "../states/states.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,7 +18,9 @@ int create_thread(t_dev *coders, int len)
 	i = 0;
 	while (i < len)
 	{
-		int res = pthread_create(&coders[i].thread, NULL, print_hello, NULL);
+		int res;
+
+		res = pthread_create(&coders[i].thread, NULL, change_state, (void *)&coders[i]);
 		if (res)
 			print_error(g_err.err_4);
 		i++;
