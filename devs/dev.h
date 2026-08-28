@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/17 17:28:30 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/18 17:31:57 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/08/29 00:01:35 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,5 @@ typedef struct s_developper
 }	t_dev;
 
 void	print_devs_infos(t_dev *coders, int len);
+void	set_up_dev(t_dev *coders, int len);
 #endif

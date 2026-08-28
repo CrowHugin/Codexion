@@ -1,17 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dev_share.h                                        :+:      :+:    :+:   */
+/*   monitoring.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/17 22:32:39 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/17 22:35:03 by bastien          ###   ########.fr       */
+/*   Created: 2026/08/28 23:58:11 by bastien           #+#    #+#             */
+/*   Updated: 2026/08/29 00:08:49 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef DEV_SHARE_H
-# define DEV_SHARE_H
+#ifndef MONITORING_H
+# define MONITORING_H
 
-int	set_up_dev(int *options);
+# include "../devs/dev.h"
+
+int monitoring(t_dev *coders, int *options);
 #endif
