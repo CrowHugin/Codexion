@@ -1,9 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   devs_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bastien <email>                            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/30 00:34:21 by bastien           #+#    #+#             */
+/*   Updated: 2026/08/30 00:34:36 by bastien          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include "dev.h"
 
 void	print_base_infos(t_dev coders, int j)
 {
-	char *var;
+	char	*var;
+
 	printf("Coder %d:\n", j + 1);
 	printf("	numbers: %d\n", coders.nb);
 	printf("	has_doggle: %d\n", coders.has_doggle);

@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/28 23:58:11 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/29 00:08:49 by bastien          ###   ########.fr       */
+/*   Updated: 2026/08/30 00:35:14 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,5 @@
 
 # include "../devs/dev.h"
 
-int monitoring(t_dev *coders, int *options);
+int	monitoring(t_dev *coders, int *options);
 #endif

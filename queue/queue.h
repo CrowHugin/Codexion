@@ -13,8 +13,8 @@
 #ifndef QUEUE_H
 # define QUEUE_H
 
-void add_queue(int **queue, int *current_size, int id_dev);
-void print_queue(int *queue, int length);
-void pop_queue(int **queue, int *length, int ind_pop);
+void	add_queue(int **queue, int *current_size, int id_dev);
+void	print_queue(int *queue, int length);
+void	pop_queue(int **queue, int *length, int ind_pop);
 
 #endif
