@@ -6,7 +6,8 @@ SOURCES = main.c \
 					devs/devs_utils.c \
 					errors/errors.c \
 					monitoring/monitoring.c \
-					states/states.c
+					states/states.c \
+					queue/queue.c
 
 NAME = codexion
 

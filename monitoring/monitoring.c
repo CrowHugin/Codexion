@@ -1,27 +1,25 @@
 #include "../devs/dev.h"
 #include "../errors/errors.h"
 #include "../states/states.h"
-#include <stdio.h>
+#include "../queue/queue.h"
 #include <stdlib.h>
 
-void *print_hello(void *arg)
-{
-	(void)arg;
-	printf("HELLO\n");
-	return NULL;
-}
 
-int create_thread(t_dev *coders, int len)
+int create_thread(t_dev *coders, int len, int *queue)
 {
 	int	i;
 
+	(void)queue;
 	i = 0;
 	while (i < len)
 	{
 		int res;
 
-		res = pthread_create(&coders[i].thread, NULL, change_state, (void *)&coders[i]);
-		if (res)
+		res = pthread_create(&coders[i].thread,
+											 NULL,
+											 change_state,
+											 (void *)&coders[i]);
+		if (res != 0)
 			print_error(g_err.err_4);
 		i++;
 	}
@@ -36,6 +34,19 @@ int create_thread(t_dev *coders, int len)
 
 int monitoring(t_dev *coders, int *options)
 {
-	create_thread(coders, options[0]);
+	int *queue;
+	int queue_size;
+
+	queue = NULL;
+	queue_size = 0;
+	create_thread(coders, options[0], queue);
+	for (int i = 0; i < options[0]; i++)
+		add_queue(&queue, &queue_size, coders[i].nb);
+
+	print_queue(queue, queue_size);
+	pop_queue(&queue, &queue_size, 0);
+	print_queue(queue, queue_size);
+	
+	free(queue);
 	return(0);
 }

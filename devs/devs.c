@@ -24,8 +24,5 @@ void	set_up_dev(t_dev *coders, int len)
 		coders[i].state = STATE_DEBUG;
 		i++;
 	}
-	coders[2].has_doggle = 0;
-	coders[0].has_doggle = 0;
-	print_devs_infos(coders, len);
 }
 

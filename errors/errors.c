@@ -20,6 +20,8 @@ const t_errors	g_err = {
 	.err_2 = "ERROR:\nYou do not have 8 positive ints\n",
 	.err_3 = "ERROR:\nLast arg is not \"fifo\" or \"edf\"",
 	.err_4 = "ERROR:\nThe thread isn't created\nexiting ...",
+	.err_5 = "ERROR:\nMemory allocation failed\n",
+	.err_6 = "ERROR:\nCannot pop an element from a non existant list",
 };
 
 void	print_error(const char *error)

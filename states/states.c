@@ -8,14 +8,17 @@ void *change_state(void *arg)
 	if (dev->state == 0)
 	{
 		dev->state = 1;
-		printf("%s\n", state_name[dev->state]);
+		printf("dev nb°%d -> %s\n", dev->nb, state_name[dev->state]);
 	}
 	else if (dev->state == 1)
 	{
 		dev->state = 2;
-		printf("%s\n", state_name[dev->state]);
+		printf("dev nb°%d -> %s\n", dev->nb, state_name[dev->state]);
 	}
 	else if (dev->state == 2)
+	{
 		dev->state = 0;
+		printf("dev nb°%d -> %s\n", dev->nb, state_name[dev->state]);
+	}
 	return NULL;
 }
