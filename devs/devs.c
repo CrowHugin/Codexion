@@ -11,49 +11,67 @@
 /* ************************************************************************** */
 
 #include "dev.h"
+#include "../queue/queue.h"
 #include <stdio.h>
+#include <unistd.h>
 
-void	set_up_dev(t_dev *coders, int len, int *queue)
+void	set_up_dev(t_dev *coders, int *options, int *queue)
 {
 	int		i;
 
 	i = 0;
-	while (i < len)
+	while (i < options[1])
 	{
 		coders[i].nb = i + 1;
 		coders[i].has_doggle = 1;
 		coders[i].state = STATE_DEBUG;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
-		coders[i].next_dev = (i + 1) % len;
-		coders[i].next_dev = (i + len - 1) % len;
+		coders[i].next_dev = (i + 1) % options[1];
+		coders[i].next_dev = (i + options[1] - 1) % options[1];
+		coders[i].options = options;
 		i++;
 	}
 }
 
-void	change_state(t_dev *dev)
+void	change_state(t_dev *dev, int *size)
 {
 	if (dev->state == 0)
 	{
 		dev->state = 1;
-		printf("X %d is compiling\n", dev->nb);
+		if (is_dongle_free(dev))
+		{
+			printf("X %d is compiling\n", dev->nb);
+			sleep(dev->options[2]);
+		}
+		else
+			add_queue(&dev->queue, size, dev->nb);
 	}
 	else if (dev->state == 1)
 	{
 		dev->state = 2;
 		printf("X %d is debugging\n", dev->nb);
+		sleep(dev->options[3]);
 	}
 	else if (dev->state == 2)
 	{
 		dev->state = 0;
 		printf("X %d is refactoring\n", dev->nb);
+		sleep(dev->options[4]);
 	}
 }
 
 void	*dev_behaivor(void *arg)
 {
 	t_dev *coders = (t_dev *)arg;
-	take_dongle(coders);
+	int	queue_size;
 
+	queue_size = 0;
+	while (1)
+	{
+		change_state(coders, &queue_size);
+		if signal_:
+			break ;
+	}
 	return (NULL);
 }

@@ -31,3 +31,22 @@ void take_dongle(t_dev *coders)
 	printf("next_dev has dongles: %d\n", next_dev->has_doggle);
 	printf("prev_dev has dongles: %d\n", prev_dev->has_doggle);
 }
+
+int is_dongle_free(t_dev *dev)
+{
+	t_dev *next = &dev->all_coders[dev->next_dev];
+	t_dev *prev = &dev->all_coders[dev->prev_dev];
+
+	if (next->has_doggle == 1 && prev->has_doggle == 1)
+		return (0);
+	return (1);
+}
+
+void	free_dongle(t_dev *dev)
+{
+	t_dev *next = &dev->all_coders[dev->next_dev];
+	t_dev *prev = &dev->all_coders[dev->prev_dev];
+
+	next->has_doggle = 0;
+	prev->has_doggle = 0;
+}

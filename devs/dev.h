@@ -27,6 +27,7 @@ typedef struct s_developper
 	pthread_t				thread;
 	struct s_developper	*all_coders;
 	int						*queue;
+	int						*options;
 	int						has_doggle;
 	int						nb;
 	int						next_dev;
@@ -35,7 +36,9 @@ typedef struct s_developper
 }	t_dev;
 
 void	print_devs_infos(t_dev *coders, int len);
-void	set_up_dev(t_dev *coders, int len, int *queue);
+void	set_up_dev(t_dev *coders, int *options, int *queue);
 void	*dev_behaivor(void *arg);
 void	take_dongle(t_dev *coders);
+void	free_dongle(t_dev *dev);
+int		is_dongle_free(t_dev *dev);
 #endif
