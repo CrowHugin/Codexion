@@ -13,7 +13,7 @@
 #include "dev.h"
 #include <stdio.h>
 
-void	set_up_dev(t_dev *coders, int len)
+void	set_up_dev(t_dev *coders, int len, int *queue)
 {
 	int		i;
 
@@ -23,6 +23,10 @@ void	set_up_dev(t_dev *coders, int len)
 		coders[i].nb = i + 1;
 		coders[i].has_doggle = 1;
 		coders[i].state = STATE_DEBUG;
+		coders[i].all_coders = coders;
+		coders[i].queue = queue;
+		coders[i].next_dev = (i + 1) % len;
+		coders[i].next_dev = (i + len - 1) % len;
 		i++;
 	}
 }
@@ -49,7 +53,7 @@ void	change_state(t_dev *dev)
 void	*dev_behaivor(void *arg)
 {
 	t_dev *coders = (t_dev *)arg;
-	change_state(coders);
+	take_dongle(coders);
 
 	return (NULL);
 }

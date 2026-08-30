@@ -17,18 +17,21 @@
 
 int	main(int argc, char *argv[])
 {
-	int		*options;
 	t_dev	*coders;
+	int		*options;
+	int	*queue;
 
 	options = malloc(sizeof(int) * argc);
+	queue = NULL;
 	if (!options)
 		return (1);
 	parsing(argc, argv, options);
 	coders = malloc(sizeof(t_dev) * options[0]);
 	if (!coders)
 		return (1);
-	set_up_dev(coders, options[0]);
+	set_up_dev(coders, options[0], queue);
 	monitoring(coders, options);
+	free(queue);
 	free(options);
 	free(coders);
 }

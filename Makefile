@@ -4,9 +4,11 @@ SOURCES = main.c \
 					parsing/*.c \
 					devs/devs.c \
 					devs/devs_utils.c \
+					devs/dongles.c \
 					errors/errors.c \
 					monitoring/monitoring.c \
 					queue/queue.c
+
 
 NAME = codexion
 
