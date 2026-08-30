@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "dev.h"
+#include <stdio.h>
 
 void	set_up_dev(t_dev *coders, int len)
 {
@@ -24,4 +25,31 @@ void	set_up_dev(t_dev *coders, int len)
 		coders[i].state = STATE_DEBUG;
 		i++;
 	}
+}
+
+void	change_state(t_dev *dev)
+{
+	if (dev->state == 0)
+	{
+		dev->state = 1;
+		printf("X %d is compiling\n", dev->nb);
+	}
+	else if (dev->state == 1)
+	{
+		dev->state = 2;
+		printf("X %d is debugging\n", dev->nb);
+	}
+	else if (dev->state == 2)
+	{
+		dev->state = 0;
+		printf("X %d is refactoring\n", dev->nb);
+	}
+}
+
+void	*dev_behaivor(void *arg)
+{
+	t_dev *coders = (t_dev *)arg;
+	change_state(coders);
+
+	return (NULL);
 }

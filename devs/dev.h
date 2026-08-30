@@ -32,4 +32,5 @@ typedef struct s_developper
 
 void	print_devs_infos(t_dev *coders, int len);
 void	set_up_dev(t_dev *coders, int len);
+void	*dev_behaivor(void *arg);
 #endif

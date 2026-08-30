@@ -6,13 +6,12 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/30 00:35:22 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/30 00:38:30 by bastien          ###   ########.fr       */
+/*   Updated: 2026/08/30 00:49:29 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../devs/dev.h"
 #include "../errors/errors.h"
-#include "../states/states.h"
 #include "../queue/queue.h"
 #include <stdlib.h>
 
@@ -27,7 +26,7 @@ int	create_thread(t_dev *coders, int len, int *queue)
 	{
 		res = pthread_create(&coders[i].thread,
 				NULL,
-				change_state,
+				dev_behaivor,
 				(void *)&coders[i]);
 		if (res != 0)
 			print_error(g_err.err_4);
@@ -54,7 +53,7 @@ int	monitoring(t_dev *coders, int *options)
 	for (int i = 0; i < options[0]; i++)
 		add_queue(&queue, &queue_size, coders[i].nb);
 	print_queue(queue, queue_size);
-	pop_queue(&queue, &queue_size, 0);
+	pop_queue(&queue, &queue_size, 1);
 	print_queue(queue, queue_size);
 	free(queue);
 	return (0);
