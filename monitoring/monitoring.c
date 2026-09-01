@@ -53,13 +53,13 @@ int	monitoring(t_dev *coders, int *options)
 	create_thread(coders, options[0], coders->queue);
 	close_threads(coders, options[0]);
 
-	// testing the queue
-	int	queue_size;
-	queue_size = 0;
-	for (int i = 0; i < options[0]; i++)
-		add_queue(&coders->queue, &queue_size, coders[i].nb);
-	// print_queue(queue, queue_size);
-	pop_queue(&coders->queue, &queue_size, 1);
-	// print_queue(queue, queue_size);
+	// // testing the queue
+	// int	queue_size;
+	// queue_size = 0;
+	// for (int i = 0; i < options[0]; i++)
+	// 	add_queue(&coders->queue, &queue_size, coders[i].nb);
+	// // print_queue(queue, queue_size);
+	// pop_queue(&coders->queue, &queue_size, 1);
+	// // print_queue(queue, queue_size);
 	return (0);
 }

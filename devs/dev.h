@@ -14,6 +14,7 @@
 # define DEV_H
 
 # include <pthread.h>
+# include <stdbool.h>
 
 enum e_state
 {
@@ -24,8 +25,8 @@ enum e_state
 
 typedef struct dongle {
 	int	nb;
-	int	is_used;
 	int	cooldown;
+	bool	is_used;
 }	t_dongle;
 
 typedef struct s_developper

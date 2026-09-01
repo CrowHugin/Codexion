@@ -20,17 +20,17 @@ void	set_up_dev(t_dev *coders, int *options, int *queue)
 	int		i;
 
 	i = 0;
-	while (i < options[1])
+	while (i < options[0])
 	{
 		coders[i].nb = i + 1;
 		coders[i].state = STATE_DEBUG;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
 		coders[i].next_dev = (i + 1) % options[1];
-		coders[i].next_dev = (i + options[1] - 1) % options[1];
+		coders[i].prev_dev = (i + options[1] - 1) % options[1];
 		coders[i].options = options;
 		coders[i].dongle.nb = i + 1;
-		coders[i].dongle.is_used = 0;
+		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown= options[6];
 		i++;
 	}
@@ -38,6 +38,7 @@ void	set_up_dev(t_dev *coders, int *options, int *queue)
 
 void	change_state(t_dev *dev, int *size)
 {
+	(void) size;
 	if (dev->state == 0)
 	{
 		dev->state = 1;
@@ -46,14 +47,14 @@ void	change_state(t_dev *dev, int *size)
 			printf("X %d is compiling\n", dev->nb);
 			sleep(dev->options[2]);
 		}
-		else
-			add_queue(&dev->queue, size, dev->nb);
+		// else
+		// 	add_queue(&dev->queue, size, dev->nb);
 	}
 	else if (dev->state == 1)
 	{
 		dev->state = 2;
 		printf("X %d is debugging\n", dev->nb);
-		sleep(dev->options[3]);
+		usleep(dev->options[3]);
 	}
 	else if (dev->state == 2)
 	{

@@ -25,8 +25,8 @@ void take_dongle(t_dev *coders)
 	printf("next_dev: %d\n\n", next_dev->nb);
 	if (coders->state == 0)
 	{
-		next_dev->dongle.is_used = 1;
-		prev_dev->dongle.is_used = 1;
+		next_dev->dongle.is_used = true;
+		prev_dev->dongle.is_used = true;
 	}
 	printf("next_dev has dongles: %d\n", next_dev->dongle.is_used);
 	printf("prev_dev has dongles: %d\n", prev_dev->dongle.is_used);
@@ -37,9 +37,9 @@ int is_dongle_free(t_dev *dev)
 	t_dev *next = &dev->all_coders[dev->next_dev];
 	t_dev *prev = &dev->all_coders[dev->prev_dev];
 
-	if (next->dongle.is_used == 0 && prev->dongle.is_used == 0)
-		return (1);
-	return (0);
+	if (next->dongle.is_used == false && prev->dongle.is_used == false)
+		return (0);
+	return (1);
 }
 
 void	free_dongle(t_dev *dev)
@@ -47,6 +47,6 @@ void	free_dongle(t_dev *dev)
 	t_dev *next = &dev->all_coders[dev->next_dev];
 	t_dev *prev = &dev->all_coders[dev->prev_dev];
 
-	next->dongle.is_used = 1;
-	prev->dongle.is_used = 1;
+	next->dongle.is_used = false;
+	prev->dongle.is_used = false;
 }
