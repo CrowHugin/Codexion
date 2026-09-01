@@ -45,10 +45,10 @@ void	change_state(t_dev *dev, int *size)
 		if (is_dongle_free(dev))
 		{
 			printf("X %d is compiling\n", dev->nb);
-			sleep(dev->options[2]);
+			usleep(dev->options[2]);
 		}
-		// else
-		// 	add_queue(&dev->queue, size, dev->nb);
+		else
+			add_queue(&dev->queue, size, dev->nb);
 	}
 	else if (dev->state == 1)
 	{
@@ -60,7 +60,7 @@ void	change_state(t_dev *dev, int *size)
 	{
 		dev->state = 0;
 		printf("X %d is refactoring\n", dev->nb);
-		sleep(dev->options[4]);
+		usleep(dev->options[4]);
 	}
 }
 
@@ -68,8 +68,14 @@ void	*dev_behaivor(void *arg)
 {
 	t_dev *coders = (t_dev *)arg;
 	int	queue_size;
+	int i;
 
+	i = 0;
 	queue_size = 0;
-	change_state(coders, &queue_size);
+	while (i < 10)
+	{
+		change_state(coders, &queue_size);
+		i++;
+	}
 	return (NULL);
 }
