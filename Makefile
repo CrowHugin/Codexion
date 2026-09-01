@@ -8,8 +8,7 @@ SOURCES = main.c \
 					errors/errors.c \
 					monitoring/monitoring.c \
 					queue/queue.c
-
-
+ARGS = 3 2 3 4 5 6 7 fifo
 NAME = codexion
 
 all: build
@@ -21,4 +20,8 @@ run_error: build
 	./codexion 8 2 3 -4 5 6 7 uihg
 
 run: build
-	./codexion 3 2 3 4 5 6 7 fifo
+	./codexion $(ARGS)
+
+debug: 
+	$(CC) $(OPTIONS) $(SOURCES) -g -o $(NAME)
+	gdb --args ./$(NAME) $(ARGS)
