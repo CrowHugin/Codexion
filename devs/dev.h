@@ -41,6 +41,7 @@ typedef struct s_developper
 	int								nb;
 	int								next_dev;
 	int								prev_dev;
+	int								burnout_delay;
 	enum e_state					state;
 }	t_dev;
 
@@ -50,4 +51,5 @@ void	*dev_behaivor(void *arg);
 void	take_dongle(t_dev *coders);
 void	free_dongle(t_dev *dev);
 int		is_dongle_free(t_dev *dev);
+long long get_time(void);
 #endif

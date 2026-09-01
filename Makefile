@@ -8,7 +8,7 @@ SOURCES = main.c \
 					threads/threads.c \
 					monitoring/monitoring.c \
 					queue/queue.c
-ARGS = 3 2 3 4 5 6 7 fifo
+ARGS = 3 2000 3 4 5 6000 7 fifo
 NAME = codexion
 
 all: build

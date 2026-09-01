@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdio.h>
+#include <sys/time.h>
 #include "dev.h"
 
 void	print_base_infos(t_dev coders, int j)
@@ -49,4 +50,14 @@ void	print_devs_infos(t_dev *coders, int len)
 	print_base_infos(coders[j], j);
 	printf("	has_doggle right: %d\n", coders[0].dongle.is_used);
 	printf("	has_doggle left: %d\n", coders[j].dongle.is_used);
+}
+
+long long get_time(void)
+{
+	struct timeval tv;
+	long long milliseconds;
+
+	gettimeofday(&tv, NULL);
+	milliseconds = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000);
+	return (milliseconds);
 }
