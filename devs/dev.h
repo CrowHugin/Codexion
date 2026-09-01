@@ -23,23 +23,24 @@ enum e_state
 	STATE_REFACTOR
 };
 
-typedef struct dongle {
-	int	nb;
-	int	cooldown;
+typedef struct dongle
+{
+	int		nb;
+	int		cooldown;
 	bool	is_used;
 }	t_dongle;
 
 typedef struct s_developper
 {
-	pthread_t				thread;
-	struct s_developper	*all_coders;
-	t_dongle			dongle;
-	int						*queue;
-	int						*options;
-	int						nb;
-	int						next_dev;
-	int						prev_dev;
-	enum e_state			state;
+	pthread_t						thread;
+	struct s_developper				*all_coders;
+	t_dongle						dongle;
+	int								*queue;
+	int								*options;
+	int								nb;
+	int								next_dev;
+	int								prev_dev;
+	enum e_state					state;
 }	t_dev;
 
 void	print_devs_infos(t_dev *coders, int len);

@@ -23,7 +23,7 @@ void	add_queue(int **queue, int *current_size, int id_dev)
 	new_size = *current_size + 1;
 	new_queue = malloc(new_size * sizeof(int));
 	if (new_queue == NULL)
-		return;
+		return ;
 	if (*queue != NULL)
 	{
 		while (i < *current_size)

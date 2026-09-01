@@ -26,3 +26,6 @@ run: build
 debug: 
 	$(CC) $(OPTIONS) $(SOURCES) -g -o $(NAME)
 	gdb --args ./$(NAME) $(ARGS)
+
+norm: build
+	watch norminette .

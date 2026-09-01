@@ -40,7 +40,7 @@ int	is_int(char	*src)
 	return (1);
 }
 
-void parsing_helper(char *str, int *options, int *j)
+void	parsing_helper(char *str, int *options, int *j)
 {
 	if (str[0] == '-' && is_int(str + 1))
 	{
