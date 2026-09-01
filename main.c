@@ -19,7 +19,7 @@ int	main(int argc, char *argv[])
 {
 	t_dev	*coders;
 	int		*options;
-	int	*queue;
+	int		*queue;
 
 	options = malloc(sizeof(int) * argc);
 	queue = NULL;
