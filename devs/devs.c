@@ -23,13 +23,15 @@ void	set_up_dev(t_dev *coders, int *options, int *queue)
 	while (i < options[1])
 	{
 		coders[i].nb = i + 1;
-		coders[i].has_doggle = 1;
 		coders[i].state = STATE_DEBUG;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
 		coders[i].next_dev = (i + 1) % options[1];
 		coders[i].next_dev = (i + options[1] - 1) % options[1];
 		coders[i].options = options;
+		coders[i].dongle.nb = i + 1;
+		coders[i].dongle.is_used = 0;
+		coders[i].dongle.cooldown= options[6];
 		i++;
 	}
 }
@@ -67,11 +69,6 @@ void	*dev_behaivor(void *arg)
 	int	queue_size;
 
 	queue_size = 0;
-	while (1)
-	{
-		change_state(coders, &queue_size);
-		if signal_:
-			break ;
-	}
+	change_state(coders, &queue_size);
 	return (NULL);
 }

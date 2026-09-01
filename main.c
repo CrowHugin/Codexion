@@ -29,7 +29,7 @@ int	main(int argc, char *argv[])
 	coders = malloc(sizeof(t_dev) * options[0]);
 	if (!coders)
 		return (1);
-	set_up_dev(coders, options[0], queue);
+	set_up_dev(coders, options, queue);
 	monitoring(coders, options);
 	free(queue);
 	free(options);
