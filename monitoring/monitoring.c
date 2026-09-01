@@ -11,11 +11,11 @@
 /* ************************************************************************** */
 
 #include "../devs/dev.h"
-#include "../errors/errors.h"
 #include "../queue/queue.h"
 #include <stdlib.h>
+#include <stdio.h>
 
-int	create_thread(t_dev *coders, int len, int *queue)
+void	create_thread(t_dev *coders, int len, int *queue)
 {
 	int	i;
 	int	res;
@@ -28,11 +28,13 @@ int	create_thread(t_dev *coders, int len, int *queue)
 				NULL,
 				dev_behaivor,
 				(void *)&coders[i]);
-		if (res != 0)
-			print_error(g_err.err_4);
+		if (res)
+		{
+			printf("Error while creating thread\nAborting...\n");
+			exit(1);
+		}
 		i++;
 	}
-	return (0);
 }
 
 int close_threads(t_dev *coders, int len)

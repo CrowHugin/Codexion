@@ -5,7 +5,6 @@ SOURCES = main.c \
 					devs/devs.c \
 					devs/devs_utils.c \
 					devs/dongles.c \
-					errors/errors.c \
 					monitoring/monitoring.c \
 					queue/queue.c
 ARGS = 3 2 3 4 5 6 7 fifo
@@ -17,7 +16,9 @@ build:
 	$(CC) $(OPTIONS) $(SOURCES) -o $(NAME)
 
 run_error: build
-	./codexion 8 2 3 -4 5 6 7 uihg
+	#./codexion 8 2 3 -4 5 6 7 uihg
+	#./codexion 8 -2 3 -4 5 6 7 fifo
+	./codexion 8 2 3 4 5 6 7
 
 run: build
 	./codexion $(ARGS)

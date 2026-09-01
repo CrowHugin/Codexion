@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../errors/errors.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,7 +23,7 @@ void	add_queue(int **queue, int *current_size, int id_dev)
 	new_size = *current_size + 1;
 	new_queue = malloc(new_size * sizeof(int));
 	if (new_queue == NULL)
-		print_error(g_err.err_5);
+		return;
 	if (*queue != NULL)
 	{
 		while (i < *current_size)
