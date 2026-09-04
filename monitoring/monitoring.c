@@ -27,7 +27,6 @@ void	monitoring(t_dev *coders)
 		{
 			if (coders[i].state == 3)
 				return ;
-			printf("Coder %d : state = %d\n", i, coders[i].state);
 			i++;
 		}
 		usleep(1000);
