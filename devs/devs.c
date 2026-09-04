@@ -17,7 +17,11 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-void	set_up_dev(t_dev *coders, int *options, int *queue, int *ptr_running)
+void	set_up_dev(t_dev *coders, 
+								 int *options, 
+								 int *queue,
+								 int *ptr_running,
+								 pthread_mutex_t *thread_lock)
 {
 	int		i;
 
@@ -36,6 +40,7 @@ void	set_up_dev(t_dev *coders, int *options, int *queue, int *ptr_running)
 		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown = options[6];
 		coders[i].last_compile_time = get_time();
+		coders[i].thread_lock = thread_lock;
 		i++;
 	}
 }
@@ -44,12 +49,14 @@ void check_burnout(t_dev *dev, long long start_time)
 {
 	if (*(dev->keep_running) == false)
 		return ;	
-	pthread_mutex_lock(print_lock);
-	if (dev->last_compile_time >= dev->options[1])
+	pthread_mutex_lock(dev->thread_lock);
+	if (get_time() - dev->last_compile_time >= dev->options[1])
 	{
 		*(dev->keep_running) = false;
+		dev->state = STATE_BURNOUT;
 		printf("%llu %d burned out\n", get_time() - start_time, dev->nb);
 	}
+	pthread_mutex_unlock(dev->thread_lock);
 }
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
@@ -58,6 +65,7 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 	{
 		if (is_dongle_free(dev))
 		{
+			pthread_mutex_lock(dev->thread_lock);
 			dev->state = 1;
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
 			dev->last_compile_time += get_time();
@@ -65,22 +73,28 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 			dev->last_compile_time += get_time();
 			(*ind)++;
 			free_dongle(dev);
+			pthread_mutex_unlock(dev->thread_lock);
 		}
 		usleep(dev->options[2]);
 	}
 	else if (dev->state == 1)
 	{
+		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
 		usleep(dev->options[3]);
+		pthread_mutex_unlock(dev->thread_lock);
 	}
 	else if (dev->state == 2)
 	{
+		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options[4]);
+		pthread_mutex_unlock(dev->thread_lock);
 	}
 	check_burnout(dev, start_time);
+	usleep(10);
 }
 
 void	*dev_behaivor(void *arg)

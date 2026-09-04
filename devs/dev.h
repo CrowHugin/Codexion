@@ -37,6 +37,7 @@ typedef struct s_developper
 	struct s_developper				*all_coders;
 	t_dongle						dongle;
 	long long					last_compile_time;
+	pthread_mutex_t		*thread_lock;
 	int								*queue;
 	int								*options;
 	int								*keep_running;
@@ -47,7 +48,7 @@ typedef struct s_developper
 }	t_dev;
 
 void	print_devs_infos(t_dev *coders, int len);
-void	set_up_dev(t_dev *coders, int *options, int *queue, int *ptr_running);
+void	set_up_dev(t_dev *coders, int *options, int *queue, int *ptr_running, pthread_mutex_t *thread_lock);
 void	*dev_behaivor(void *arg);
 void	take_dongle(t_dev *coders);
 void	free_dongle(t_dev *dev);

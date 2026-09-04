@@ -23,6 +23,7 @@ int	main(int argc, char *argv[])
 	int		*options;
 	int		*queue;
 	int		keep_running;
+	pthread_mutex_t lock;
 
 	keep_running = 1;
 	options = malloc(sizeof(int) * argc);
@@ -33,7 +34,7 @@ int	main(int argc, char *argv[])
 	coders = malloc(sizeof(t_dev) * options[0]);
 	if (!coders)
 		return (1);
-	set_up_dev(coders, options, queue);
+	set_up_dev(coders, options, queue, &keep_running, &lock);
 	create_thread(coders, options[0], coders->queue);
 	monitoring(coders);
 	close_threads(coders, options[0]);
