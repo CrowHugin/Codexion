@@ -73,10 +73,7 @@ void	*dev_behaivor(void *arg)
 	coders = (t_dev *)arg;
 	i = 0;
 	queue_size = 0;
-	while (i < 10)
-	{
+	while (coders->state != 3)
 		change_state(coders, &queue_size);
-		i++;
-	}
 	return (NULL);
 }

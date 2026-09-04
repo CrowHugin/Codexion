@@ -33,7 +33,7 @@ int	main(int argc, char *argv[])
 		return (1);
 	set_up_dev(coders, options, queue);
 	create_thread(coders, options[0], coders->queue);
-	monitoring(coders, options);
+	monitoring(coders);
 	close_threads(coders, options[0]);
 	free(queue);
 	free(options);
