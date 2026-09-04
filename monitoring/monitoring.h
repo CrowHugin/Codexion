@@ -15,5 +15,5 @@
 
 # include "../devs/dev.h"
 
-int	monitoring(t_dev *coders, int *options);
+int	monitoring(t_dev *coders);
 #endif

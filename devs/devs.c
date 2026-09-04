@@ -26,8 +26,8 @@ void	set_up_dev(t_dev *coders, int *options, int *queue)
 		coders[i].state = STATE_DEBUG;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
-		coders[i].next_dev = (i + 1) % options[1];
-		coders[i].prev_dev = (i + options[1] - 1) % options[1];
+		coders[i].next_dev = (i + 1) % options[0];
+		coders[i].prev_dev = (i + options[0] - 1) % options[0];
 		coders[i].options = options;
 		coders[i].dongle.nb = i + 1;
 		coders[i].dongle.is_used = false;
@@ -73,10 +73,7 @@ void	*dev_behaivor(void *arg)
 	coders = (t_dev *)arg;
 	i = 0;
 	queue_size = 0;
-	while (i < 10)
-	{
+	while (coders->state != 3)
 		change_state(coders, &queue_size);
-		i++;
-	}
 	return (NULL);
 }

@@ -5,6 +5,7 @@ SOURCES = main.c \
 					devs/devs.c \
 					devs/devs_utils.c \
 					devs/dongles.c \
+					threads/threads.c \
 					monitoring/monitoring.c \
 					queue/queue.c
 ARGS = 3 2 3 4 5 6 7 fifo

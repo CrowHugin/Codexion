@@ -20,7 +20,8 @@ enum e_state
 {
 	STATE_COMPILE,
 	STATE_DEBUG,
-	STATE_REFACTOR
+	STATE_REFACTOR,
+	STATE_BURNOUT
 };
 
 typedef struct dongle
