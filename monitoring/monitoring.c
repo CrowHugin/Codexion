@@ -6,54 +6,34 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/30 00:35:22 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/30 00:49:29 by bastien          ###   ########.fr       */
+/*   Updated: 2026/09/04 15:09:32 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../devs/dev.h"
-#include "../queue/queue.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
-void	create_thread(t_dev *coders, int len, int *queue)
+void	monitoring(t_dev *coders)
 {
-	int	i;
-	int	res;
+	int i;
+	int	total_coders;
 
-	(void)queue;
-	i = 0;
-	while (i < len)
+	total_coders = coders[0].options[0];
+	while (true)
 	{
-		res = pthread_create(&coders[i].thread,
-				NULL,
-				dev_behaivor,
-				(void *)&coders[i]);
-		if (res)
+		i = 0;
+		while (i < total_coders)
 		{
-			printf("Error while creating thread\nAborting...\n");
-			exit(1);
+			if (coders[i].state == 3)
+				return ;
+			printf("Coder %d : state = %d\n", i, coders[i].state);
+			i++;
 		}
-		i++;
+		usleep(1000);
 	}
 }
 
-int	close_threads(t_dev *coders, int len)
-{
-	int	i;
-
-	i = 0;
-	while (i < len)
-	{
-		pthread_join(coders[i].thread, NULL);
-		i++;
-	}
-	return (0);
-}
-
-int	monitoring(t_dev *coders, int *options)
-{
-	create_thread(coders, options[0], coders->queue);
-	close_threads(coders, options[0]);
 
 	// // testing the queue
 	// int	queue_size;
@@ -63,5 +43,5 @@ int	monitoring(t_dev *coders, int *options)
 	// // print_queue(queue, queue_size);
 	// pop_queue(&coders->queue, &queue_size, 1);
 	// // print_queue(queue, queue_size);
-	return (0);
-}
+// 	return (0);
+// }

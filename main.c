@@ -12,7 +12,9 @@
 
 #include "parsing/parsing.h"
 #include "monitoring/monitoring.h"
+#include "threads/threads.h"
 #include "devs/dev.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 int	main(int argc, char *argv[])
@@ -30,7 +32,9 @@ int	main(int argc, char *argv[])
 	if (!coders)
 		return (1);
 	set_up_dev(coders, options, queue);
+	create_thread(coders, options[0], coders->queue);
 	monitoring(coders, options);
+	close_threads(coders, options[0]);
 	free(queue);
 	free(options);
 	free(coders);
