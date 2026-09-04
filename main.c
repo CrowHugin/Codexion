@@ -22,7 +22,9 @@ int	main(int argc, char *argv[])
 	t_dev	*coders;
 	int		*options;
 	int		*queue;
+	int		keep_running;
 
+	keep_running = 1;
 	options = malloc(sizeof(int) * argc);
 	queue = NULL;
 	if (!options)

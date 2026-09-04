@@ -16,18 +16,10 @@
 
 void	print_base_infos(t_dev coders, int j)
 {
-	char	*var;
-
 	printf("Coder %d:\n", j + 1);
 	printf("	numbers: %d\n", coders.nb);
-	printf("	has_doggle: %d\n", coders.dongle.is_used);
-	if (coders.state == 0)
-		var = "compile";
-	else if (coders.state == 1)
-		var = "debug";
-	else
-		var = "refactor";
-	printf("	state: %s\n", var);
+	printf("	state: %d\n", coders.state);
+	printf("	running: %d\n", *coders.keep_running);
 }
 
 void	print_devs_infos(t_dev *coders, int len)
