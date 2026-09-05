@@ -11,12 +11,11 @@
 /* ************************************************************************** */
 
 #include "../devs/dev.h"
-#include <stdio.h>
 #include <unistd.h>
 
 void	monitoring(t_dev *coders)
 {
-	int i;
+	int	i;
 	int	total_coders;
 
 	total_coders = coders[0].options[0];
@@ -29,11 +28,9 @@ void	monitoring(t_dev *coders)
 				return ;
 			i++;
 		}
-		usleep(1000);
+		usleep(10);
 	}
 }
-
-
 	// // testing the queue
 	// int	queue_size;
 	// queue_size = 0;

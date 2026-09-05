@@ -44,10 +44,10 @@ void	print_devs_infos(t_dev *coders, int len)
 	printf("	has_doggle left: %d\n", coders[j].dongle.is_used);
 }
 
-long long get_time(void)
+long long	get_time(void)
 {
-	struct timeval tv;
-	long long milliseconds;
+	struct timeval	tv;
+	long long		milliseconds;
 
 	gettimeofday(&tv, NULL);
 	milliseconds = (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000);

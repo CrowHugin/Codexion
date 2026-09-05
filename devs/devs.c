@@ -17,11 +17,11 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-void	set_up_dev(t_dev *coders, 
-								 int *options, 
-								 int *queue,
-								 int *ptr_running,
-								 pthread_mutex_t *thread_lock)
+void	set_up_dev(t_dev *coders,
+								int	*options,
+								int *queue,
+								int *ptr_running,
+								pthread_mutex_t *thread_lock)
 {
 	int		i;
 
@@ -29,7 +29,7 @@ void	set_up_dev(t_dev *coders,
 	while (i < options[0])
 	{
 		coders[i].nb = i + 1;
-		coders[i].state = STATE_DEBUG;
+		coders[i].state = 0;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
 		coders[i].next_dev = (i + 1) % options[0];
@@ -45,10 +45,10 @@ void	set_up_dev(t_dev *coders,
 	}
 }
 
-void check_burnout(t_dev *dev, long long start_time)
+void	check_burnout(t_dev *dev, long long start_time)
 {
 	if (*(dev->keep_running) == false)
-		return ;	
+		return ;
 	pthread_mutex_lock(dev->thread_lock);
 	if (get_time() - dev->last_compile_time >= dev->options[1])
 	{
@@ -63,17 +63,24 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	if (dev->state == 0)
 	{
+		pthread_mutex_lock(dev->thread_lock);
 		if (is_dongle_free(dev))
 		{
-			pthread_mutex_lock(dev->thread_lock);
 			dev->state = 1;
+			take_dongle(dev, get_time() - start_time);
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-			dev->last_compile_time += get_time();
+			dev->last_compile_time = get_time();
+			pthread_mutex_unlock(dev->thread_lock);
 			usleep(dev->options[2]);
-			dev->last_compile_time += get_time();
+			pthread_mutex_lock(dev->thread_lock);
 			(*ind)++;
 			free_dongle(dev);
 			pthread_mutex_unlock(dev->thread_lock);
+		}
+		else
+		{
+			pthread_mutex_unlock(dev->thread_lock);
+			usleep(100);
 		}
 		usleep(dev->options[2]);
 	}
@@ -82,16 +89,16 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
-		usleep(dev->options[3]);
 		pthread_mutex_unlock(dev->thread_lock);
+		usleep(dev->options[3]);
 	}
 	else if (dev->state == 2)
 	{
 		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
-		usleep(dev->options[4]);
 		pthread_mutex_unlock(dev->thread_lock);
+		usleep(dev->options[4]);
 	}
 	check_burnout(dev, start_time);
 	usleep(10);
@@ -100,8 +107,8 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 void	*dev_behaivor(void *arg)
 {
 	long long	start_time;
-	t_dev	*coders;
-	int		i;
+	t_dev		*coders;
+	int			i;
 
 	start_time = get_time();
 	coders = (t_dev *)arg;
