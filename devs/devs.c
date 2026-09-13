@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "dev.h"
-#include "../queue/queue.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +41,11 @@ void	set_up_dev(t_dev *coders,
 		coders[i].dongle.cooldown = options[6];
 		coders[i].last_compile_time = get_time();
 		coders[i].thread_lock = thread_lock;
+		coders[i].dongle.waiters = malloc(sizeof(t_request)* options[0]);
+		coders[i].dongle.count = 0;
+		coders[i].dongle.cap = options[0];
 		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
+		pthread_cond_init(&coders[i].dongle.cond, NULL);
 		i++;
 	}
 }
@@ -65,29 +68,40 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	if (dev->state == 0)
 	{
-		t_dongle	*prev_d = &dev->all_coders[dev->prev_dev].dongle;
-		t_dongle	*next_d = &dev->all_coders[dev->next_dev].dongle;
+		t_dongle	*prev_d;
+		t_dongle	*next_d;
+		t_dongle	*a;
+		t_dongle	*b;
+		long long	deadline;
 
-		lock_two_dongles(prev_d, next_d);
-		if (is_dongle_free(dev))
+
+		prev_d = &dev->all_coders[dev->prev_dev].dongle;
+		next_d = &dev->all_coders[dev->next_dev].dongle;
+		deadline = dev->last_compile_time + dev->options[1];
+
+		a = prev_d;
+		b = next_d;
+		if (a->nb > b->nb)
 		{
-			take_dongle(dev, get_time() - start_time);
-			dev->state = 1;
-			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-			dev->last_compile_time = get_time();
-			unlock_two_dongles(prev_d, next_d);
-			usleep(dev->options[2]);
-			lock_two_dongles(prev_d, next_d);
-			(*ind)++;
-			free_dongle(dev);
-			unlock_two_dongles(prev_d, next_d);
+			t_dongle	*tmp = a;
+			a = b;
+			b = tmp;
 		}
-		else
-		{
-			// pthread_cond_wait(&prev_d->cond, &next_d->mutex);
-			unlock_two_dongles(prev_d, next_d);
-			usleep(200);
-		}
+		acquire_dongle(dev, a, dev->nb, deadline, dev->options[7], start_time);
+		if (atomic_load(dev->keep_running) == 0)
+			return ;
+		acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
+		if (atomic_load(dev->keep_running) == 0)
+			return ;
+
+		take_dongle(dev, get_time() - start_time);
+		dev->state = 1;
+		dev->last_compile_time = get_time();
+		printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
+		usleep(dev->options[2]);
+		release_dongle(prev_d, prev_d->cooldown);
+		release_dongle(next_d, next_d->cooldown);
+		(*ind)++;
 	}
 	else if (dev->state == 1)
 	{
@@ -115,5 +129,7 @@ void	*dev_behaivor(void *arg)
 	i = 0;
 	while (i < coders->options[5] && atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
+	if (atomic_load(coders->keep_running) == true)
+		coders->state = STATE_FINNISH;
 	return (NULL);
 }

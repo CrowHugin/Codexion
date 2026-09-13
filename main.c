@@ -28,7 +28,7 @@ int	main(int argc, char *argv[])
 
 	atomic_init(&keep_running, 1);
 	pthread_mutex_init(&lock, NULL);
-	options = malloc(sizeof(int) * argc);
+	options = malloc(sizeof(int) * argc + 1);
 	queue = NULL;
 	if (!options)
 		return (1);

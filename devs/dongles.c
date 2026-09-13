@@ -11,29 +11,10 @@
 /* ************************************************************************** */
 
 #include "dev.h"
+#include "../queue/queue.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
-
-void lock_two_dongles(t_dongle *a, t_dongle *b)
-{
-    if (a->nb < b->nb)
-    {
-        pthread_mutex_lock(&a->mutex);
-        pthread_mutex_lock(&b->mutex);
-    }
-    else
-    {
-        pthread_mutex_lock(&b->mutex);
-        pthread_mutex_lock(&a->mutex);
-    }
-}
-
-void unlock_two_dongles(t_dongle *a, t_dongle *b)
-{
-    pthread_mutex_unlock(&a->mutex);
-    pthread_mutex_unlock(&b->mutex);
-}
 
 void	take_dongle(t_dev *coders, long long time)
 {
@@ -48,36 +29,33 @@ void	take_dongle(t_dev *coders, long long time)
 	printf("%llu %d has taken a dongle\n", time, coders->nb);
 }
 
-int	is_dongle_free(t_dev *dev)
+void acquire_dongle(t_dev *dev, t_dongle *d, 
+										int coder_id, long long deadline,
+										int sched, long long start_time)
 {
-	t_dev			*next;
-	t_dev			*prev;
-	long long	now;
-
-	next = &dev->all_coders[dev->next_dev];
-	prev = &dev->all_coders[dev->prev_dev];
-
-	now = get_time();
-	if (next->dongle.is_used || now < next->dongle.available_at) 
-		return (0);
-	if (prev->dongle.is_used || now < prev->dongle.available_at)
-		return (0);
-	return (1);
+    pthread_mutex_lock(&d->mutex);
+    while (d->is_used
+        || get_time() < d->available_at
+        || !is_top(d, coder_id, sched))
+    {
+        if (!in_queue(d, coder_id))
+            enqueue(d, coder_id, deadline);
+				pthread_mutex_unlock(&d->mutex);
+				check_burnout(dev, start_time);
+				if (atomic_load(dev->keep_running) == 0)
+					return ;
+				usleep(50);
+				pthread_mutex_lock(&d->mutex);
+    }
+    d->is_used = true;
+    dequeue(d, coder_id);
+    pthread_mutex_unlock(&d->mutex);
 }
 
-void	free_dongle(t_dev *dev)
+void release_dongle(t_dongle *d, int cooldown)
 {
-	t_dev	*next;
-	t_dev	*prev;
-	long long	now;
-
-	now = get_time();
-	next = &dev->all_coders[dev->next_dev];
-	prev = &dev->all_coders[dev->prev_dev];
-	next->dongle.is_used = false;
-	prev->dongle.is_used = false;
-	next->dongle.available_at = now + next->dongle.cooldown;
-	prev->dongle.available_at = now + prev->dongle.cooldown;
-	pthread_cond_broadcast(&next->dongle.cond);
-	pthread_cond_broadcast(&prev->dongle.cond);
+    pthread_mutex_lock(&d->mutex);
+    d->is_used = false;
+    d->available_at = get_time() + cooldown;
+    pthread_mutex_unlock(&d->mutex);
 }

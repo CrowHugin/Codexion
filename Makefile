@@ -8,7 +8,7 @@ SOURCES = main.c \
 					threads/threads.c \
 					monitoring/monitoring.c \
 					queue/queue.c
-ARGS = 3 200 300 400 500 6 100 fifo
+ARGS = 3 800 300 400 500 6 100 fifo
 NAME = codexion
 
 all: build
@@ -19,7 +19,7 @@ build:
 run_error: build
 	#./codexion 8 2 3 -4 5 6 7 uihg
 	#./codexion 8 -2 3 -4 5 6 7 fifo
-	./codexion 8 2 3 4 5 6 7
+	./codexion 3 800 300 400 500 6 100 fifo
 
 run: build
 	./codexion $(ARGS)

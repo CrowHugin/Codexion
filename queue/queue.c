@@ -6,73 +6,68 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 23:24:43 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/29 23:25:14 by bastien          ###   ########.fr       */
+/*   Updated: 2026/09/13 19:30:49 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "queue.h"
+#include "../devs/dev.h"
 
-int	init_queue(t_node **queue, int nb_dev)
+int in_queue(t_dongle *d, int coder_id)
 {
-	*queue = calloc(nb_dev, sizeof(t_node));
-	if (!(*queue))
-		return (1);
-	return (0);
+    int i = 0;
+    while (i < d->count)
+    {
+        if (d->waiters[i].dev_id == coder_id)
+            return (1);
+        i++;
+    }
+    return (0);
 }
 
-void addBack(t_node **queue, t_node *a)
+void enqueue(t_dongle *d, int coder_id, long long deadline)
 {
-	t_node *tmp;
-
-	if (!*queue || !a)
-		return;
-	tmp = *queue;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = a;
+    if (in_queue(d, coder_id) || d->count >= d->cap)
+        return ;
+    d->waiters[d->count].dev_id = coder_id;
+    d->waiters[d->count].arrival = get_time();
+    d->waiters[d->count].deadline = deadline;
+    d->count++;
 }
 
-int	peek(t_node *queue)
+void dequeue(t_dongle *d, int coder_id)
 {
-	if (!queue)
-		return (-1);
-	return (queue->dev_id);
+    int i = 0;
+    while (i < d->count)
+    {
+        if (d->waiters[i].dev_id == coder_id)
+        {
+            d->waiters[i] = d->waiters[d->count - 1];
+            d->count--;
+            return ;
+        }
+        i++;
+    }
 }
 
-int	getIndexToPop(t_node *queue, int scheduler)
+int is_top(t_dongle *d, int coder_id, int scheduler)
 {
-	int			ind;
-	t_node	*tmp;
-	long		deadline;
+    int best = 0;
+    int i = 1;
 
-	tmp = queue;
-	// FIFO
-	if (scheduler == 0)
-	{
-		ind = queue->dev_id;
-		while (tmp->next)
-		{
-			if (tmp->dev_id > ind)
-				ind = tmp->dev_id;
-		}
-		return ind;
-	}
-	// EDF
-	deadline = tmp->deadline;
-	while (tmp->next)
-	{
-		if (tmp->deadline < deadline)
-			ind = tmp->dev_id;
-	}
-	return (ind);
+    if (d->count == 0)
+        return (1);
+    while (i < d->count)
+    {
+        if (scheduler == 0
+            && d->waiters[i].arrival < d->waiters[best].arrival)
+            best = i;
+        else if (scheduler == 1
+            && (d->waiters[i].deadline < d->waiters[best].deadline
+                || (d->waiters[i].deadline == d->waiters[best].deadline
+                    && d->waiters[i].arrival < d->waiters[best].arrival)))
+            best = i;
+        i++;
+    }
+    return (d->waiters[best].dev_id == coder_id);
 }
-
-// void popQueue(t_node **queue, int indPop)
-// {
-// 	t_node *tmp;
-// 
-// 	while (tmp->dev_id != indPop)
-// 		tmp = tmp->next
-// }
