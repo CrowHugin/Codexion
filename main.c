@@ -32,7 +32,11 @@ int	main(int argc, char *argv[])
 	queue = NULL;
 	if (!options)
 		return (1);
-	parsing(argc, argv, options);
+	if (parsing(argc, argv, options))
+	{
+		free(options);
+		return (1);
+	}
 	coders = malloc(sizeof(t_dev) * options[0]);
 	if (!coders)
 		return (1);
@@ -41,7 +45,10 @@ int	main(int argc, char *argv[])
 	monitoring(coders);
 	close_threads(coders, options[0]);
 	for (int i = 0; i < options[0]; i++)
+	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
+		free(coders[i].dongle.waiters);
+	}
 	free(queue);
 	free(options);
 	free(coders);

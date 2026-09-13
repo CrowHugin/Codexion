@@ -19,6 +19,7 @@ void	monitoring(t_dev *coders)
 	int	total_coders;
 	int	done;
 
+	done = 0;
 	total_coders = coders[0].options[0];
 	while (true)
 	{

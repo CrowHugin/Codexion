@@ -39,11 +39,12 @@ void	set_up_dev(t_dev *coders,
 		coders[i].dongle.nb = i + 1;
 		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown = options[6];
-		coders[i].last_compile_time = get_time();
 		coders[i].thread_lock = thread_lock;
 		coders[i].dongle.waiters = malloc(sizeof(t_request)* options[0]);
 		coders[i].dongle.count = 0;
 		coders[i].dongle.cap = options[0];
+		coders[i].dongle.available_at = 0;
+		coders[i].dongle.is_used = false;
 		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
 		pthread_cond_init(&coders[i].dongle.cond, NULL);
 		i++;
@@ -127,6 +128,7 @@ void	*dev_behaivor(void *arg)
 	start_time = get_time();
 	coders = (t_dev *)arg;
 	i = 0;
+	coders->last_compile_time = start_time;
 	while (i < coders->options[5] && atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
 	if (atomic_load(coders->keep_running) == true)

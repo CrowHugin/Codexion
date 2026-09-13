@@ -17,9 +17,7 @@ build:
 	$(CC) $(OPTIONS) $(SOURCES) -o $(NAME)
 
 run_error: build
-	#./codexion 8 2 3 -4 5 6 7 uihg
-	#./codexion 8 -2 3 -4 5 6 7 fifo
-	./codexion 3 800 300 400 500 6 100 fifo
+	./codexion 8 -2 3 4 5 6 7 fifo
 
 run: build
 	./codexion $(ARGS)
