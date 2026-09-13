@@ -12,9 +12,21 @@
 
 #ifndef QUEUE_H
 # define QUEUE_H
+# include "../devs/dev.h"
 
-void	add_queue(int **queue, int *current_size, int id_dev);
-void	print_queue(int *queue, int length);
-void	pop_queue(int **queue, int *length, int ind_pop);
+typedef struct s_node t_node;
+
+typedef struct s_node
+{
+	int			dev_id;
+	t_node	*prev;
+	t_node	*next;
+	long		deadline;
+} t_node;
+
+int in_queue(t_dongle *d, int coder_id);
+void enqueue(t_dongle *d, int coder_id, long long deadline);
+void dequeue(t_dongle *d, int coder_id);
+int is_top(t_dongle *d, int coder_id, int scheduler);
 
 #endif

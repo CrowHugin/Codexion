@@ -16,5 +16,5 @@
 # include "../devs/dev.h"
 
 void	create_thread(t_dev *coders, int len, int *queue);
-int	close_threads(t_dev *coders, int len);
+int		close_threads(t_dev *coders, int len);
 #endif

@@ -6,72 +6,68 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 23:24:43 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/29 23:25:14 by bastien          ###   ########.fr       */
+/*   Updated: 2026/09/13 19:30:49 by bastien          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "queue.h"
+#include "../devs/dev.h"
 
-void	add_queue(int **queue, int *current_size, int id_dev)
+int in_queue(t_dongle *d, int coder_id)
 {
-	int	new_size;
-	int	*new_queue;
-	int	i;
-
-	i = 0;
-	new_size = *current_size + 1;
-	new_queue = malloc(new_size * sizeof(int));
-	if (new_queue == NULL)
-		return ;
-	if (*queue != NULL)
-	{
-		while (i < *current_size)
-		{
-			new_queue[i] = (*queue)[i];
-			i++;
-		}
-		free(*queue);
-	}
-	new_queue[*current_size] = id_dev;
-	*queue = new_queue;
-	*current_size = new_size;
+    int i = 0;
+    while (i < d->count)
+    {
+        if (d->waiters[i].dev_id == coder_id)
+            return (1);
+        i++;
+    }
+    return (0);
 }
 
-void	pop_queue(int **queue, int *length, int ind_pop)
+void enqueue(t_dongle *d, int coder_id, long long deadline)
 {
-	int	i;
-	int	j;
-	int	*new_queue;
-	int	new_size;
-
-	i = 0;
-	j = 0;
-	new_size = *length - 1;
-	new_queue = malloc(new_size * sizeof(int));
-	while (i < *length)
-	{
-		if (i != ind_pop)
-		{
-			new_queue[j] = (*queue)[i];
-			j++;
-		}
-		i++;
-	}
-	free(*queue);
-	*queue = new_queue;
-	*length = new_size;
+    if (in_queue(d, coder_id) || d->count >= d->cap)
+        return ;
+    d->waiters[d->count].dev_id = coder_id;
+    d->waiters[d->count].arrival = get_time();
+    d->waiters[d->count].deadline = deadline;
+    d->count++;
 }
 
-void	print_queue(int *queue, int length)
+void dequeue(t_dongle *d, int coder_id)
 {
-	int	i;
+    int i = 0;
+    while (i < d->count)
+    {
+        if (d->waiters[i].dev_id == coder_id)
+        {
+            d->waiters[i] = d->waiters[d->count - 1];
+            d->count--;
+            return ;
+        }
+        i++;
+    }
+}
 
-	i = 0;
-	while (i < length - 1)
-	{
-		printf("%d, ", queue[i]);
-		i++;
-	}
-	printf("%d\n", queue[i]);
+int is_top(t_dongle *d, int coder_id, int scheduler)
+{
+    int best = 0;
+    int i = 1;
+
+    if (d->count == 0)
+        return (1);
+    while (i < d->count)
+    {
+        if (scheduler == 0
+            && d->waiters[i].arrival < d->waiters[best].arrival)
+            best = i;
+        else if (scheduler == 1
+            && (d->waiters[i].deadline < d->waiters[best].deadline
+                || (d->waiters[i].deadline == d->waiters[best].deadline
+                    && d->waiters[i].arrival < d->waiters[best].arrival)))
+            best = i;
+        i++;
+    }
+    return (d->waiters[best].dev_id == coder_id);
 }

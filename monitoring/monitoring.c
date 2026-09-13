@@ -11,13 +11,13 @@
 /* ************************************************************************** */
 
 #include "../devs/dev.h"
-#include <stdio.h>
 #include <unistd.h>
 
 void	monitoring(t_dev *coders)
 {
-	int i;
+	int	i;
 	int	total_coders;
+	int	done;
 
 	total_coders = coders[0].options[0];
 	while (true)
@@ -25,15 +25,16 @@ void	monitoring(t_dev *coders)
 		i = 0;
 		while (i < total_coders)
 		{
-			if (coders[i].state == 3)
-				return ;
+			if (coders[i].state == STATE_BURNOUT
+					|| coders[i].state == STATE_FINNISH)
+				done++;
 			i++;
 		}
-		usleep(1000);
+		if (done == total_coders)
+			return ;
+		usleep(10);
 	}
 }
-
-
 	// // testing the queue
 	// int	queue_size;
 	// queue_size = 0;

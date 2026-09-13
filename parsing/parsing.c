@@ -83,5 +83,8 @@ int	*parsing(int argc, char *argv[], int *options)
 		parsing_helper(argv[i], options, &j);
 		i++;
 	}
+	options[7] = 0;
+	if (strcmp(last_arg, "edf") == 0)
+		options[7] = 1;
 	return (0);
 }

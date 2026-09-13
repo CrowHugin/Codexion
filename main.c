@@ -14,19 +14,21 @@
 #include "monitoring/monitoring.h"
 #include "threads/threads.h"
 #include "devs/dev.h"
-#include <stdio.h>
+#include <pthread.h>
 #include <stdlib.h>
+#include <stdatomic.h>
 
 int	main(int argc, char *argv[])
 {
-	t_dev	*coders;
-	int		*options;
-	int		*queue;
-	int		keep_running;
-	pthread_mutex_t lock;
+	t_dev			*coders;
+	int				*options;
+	int				*queue;
+	atomic_int				keep_running;
+	pthread_mutex_t	lock;
 
-	keep_running = 1;
-	options = malloc(sizeof(int) * argc);
+	atomic_init(&keep_running, 1);
+	pthread_mutex_init(&lock, NULL);
+	options = malloc(sizeof(int) * argc + 1);
 	queue = NULL;
 	if (!options)
 		return (1);
@@ -38,6 +40,8 @@ int	main(int argc, char *argv[])
 	create_thread(coders, options[0], coders->queue);
 	monitoring(coders);
 	close_threads(coders, options[0]);
+	for (int i = 0; i < options[0]; i++)
+		pthread_mutex_destroy(&coders[i].dongle.mutex);
 	free(queue);
 	free(options);
 	free(coders);

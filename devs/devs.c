@@ -11,17 +11,17 @@
 /* ************************************************************************** */
 
 #include "dev.h"
-#include "../queue/queue.h"
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
 
-void	set_up_dev(t_dev *coders, 
-								 int *options, 
-								 int *queue,
-								 int *ptr_running,
-								 pthread_mutex_t *thread_lock)
+void	set_up_dev(t_dev *coders,
+								int	*options,
+								int *queue,
+								atomic_int	*ptr_running,
+								pthread_mutex_t *thread_lock)
 {
 	int		i;
 
@@ -29,7 +29,7 @@ void	set_up_dev(t_dev *coders,
 	while (i < options[0])
 	{
 		coders[i].nb = i + 1;
-		coders[i].state = STATE_DEBUG;
+		coders[i].state = 0;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
 		coders[i].next_dev = (i + 1) % options[0];
@@ -41,72 +41,95 @@ void	set_up_dev(t_dev *coders,
 		coders[i].dongle.cooldown = options[6];
 		coders[i].last_compile_time = get_time();
 		coders[i].thread_lock = thread_lock;
+		coders[i].dongle.waiters = malloc(sizeof(t_request)* options[0]);
+		coders[i].dongle.count = 0;
+		coders[i].dongle.cap = options[0];
+		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
+		pthread_cond_init(&coders[i].dongle.cond, NULL);
 		i++;
 	}
 }
 
-void check_burnout(t_dev *dev, long long start_time)
+void	check_burnout(t_dev *dev, long long start_time)
 {
-	if (*(dev->keep_running) == false)
-		return ;	
-	pthread_mutex_lock(dev->thread_lock);
+	if (atomic_load(dev->keep_running) == 0)
+		return ;
 	if (get_time() - dev->last_compile_time >= dev->options[1])
 	{
-		*(dev->keep_running) = false;
+		atomic_store(dev->keep_running, 0);
+		pthread_mutex_lock(dev->thread_lock);
 		dev->state = STATE_BURNOUT;
 		printf("%llu %d burned out\n", get_time() - start_time, dev->nb);
+		pthread_mutex_unlock(dev->thread_lock);
 	}
-	pthread_mutex_unlock(dev->thread_lock);
 }
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	if (dev->state == 0)
 	{
-		if (is_dongle_free(dev))
+		t_dongle	*prev_d;
+		t_dongle	*next_d;
+		t_dongle	*a;
+		t_dongle	*b;
+		long long	deadline;
+
+
+		prev_d = &dev->all_coders[dev->prev_dev].dongle;
+		next_d = &dev->all_coders[dev->next_dev].dongle;
+		deadline = dev->last_compile_time + dev->options[1];
+
+		a = prev_d;
+		b = next_d;
+		if (a->nb > b->nb)
 		{
-			pthread_mutex_lock(dev->thread_lock);
-			dev->state = 1;
-			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-			dev->last_compile_time += get_time();
-			usleep(dev->options[2]);
-			dev->last_compile_time += get_time();
-			(*ind)++;
-			free_dongle(dev);
-			pthread_mutex_unlock(dev->thread_lock);
+			t_dongle	*tmp = a;
+			a = b;
+			b = tmp;
 		}
+		acquire_dongle(dev, a, dev->nb, deadline, dev->options[7], start_time);
+		if (atomic_load(dev->keep_running) == 0)
+			return ;
+		acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
+		if (atomic_load(dev->keep_running) == 0)
+			return ;
+
+		take_dongle(dev, get_time() - start_time);
+		dev->state = 1;
+		dev->last_compile_time = get_time();
+		printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
 		usleep(dev->options[2]);
+		release_dongle(prev_d, prev_d->cooldown);
+		release_dongle(next_d, next_d->cooldown);
+		(*ind)++;
 	}
 	else if (dev->state == 1)
 	{
-		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
 		usleep(dev->options[3]);
-		pthread_mutex_unlock(dev->thread_lock);
 	}
 	else if (dev->state == 2)
 	{
-		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options[4]);
-		pthread_mutex_unlock(dev->thread_lock);
 	}
 	check_burnout(dev, start_time);
-	usleep(10);
 }
 
 void	*dev_behaivor(void *arg)
 {
 	long long	start_time;
-	t_dev	*coders;
-	int		i;
+	t_dev		*coders;
+	int			i;
 
 	start_time = get_time();
 	coders = (t_dev *)arg;
 	i = 0;
-	while (i < coders->options[5] && *(coders->keep_running) == true)
+	while (i < coders->options[5] && atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
+	if (atomic_load(coders->keep_running) == true)
+		coders->state = STATE_FINNISH;
 	return (NULL);
 }
