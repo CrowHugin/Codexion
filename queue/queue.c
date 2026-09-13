@@ -12,66 +12,67 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "queue.h"
 
-void	add_queue(int **queue, int *current_size, int id_dev)
+int	init_queue(t_node **queue, int nb_dev)
 {
-	int	new_size;
-	int	*new_queue;
-	int	i;
+	*queue = calloc(nb_dev, sizeof(t_node));
+	if (!(*queue))
+		return (1);
+	return (0);
+}
 
-	i = 0;
-	new_size = *current_size + 1;
-	new_queue = malloc(new_size * sizeof(int));
-	if (new_queue == NULL)
-		return ;
-	if (*queue != NULL)
+void addBack(t_node **queue, t_node *a)
+{
+	t_node *tmp;
+
+	if (!*queue || !a)
+		return;
+	tmp = *queue;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = a;
+}
+
+int	peek(t_node *queue)
+{
+	if (!queue)
+		return (-1);
+	return (queue->dev_id);
+}
+
+int	getIndexToPop(t_node *queue, int scheduler)
+{
+	int			ind;
+	t_node	*tmp;
+	long		deadline;
+
+	tmp = queue;
+	// FIFO
+	if (scheduler == 0)
 	{
-		while (i < *current_size)
+		ind = queue->dev_id;
+		while (tmp->next)
 		{
-			new_queue[i] = (*queue)[i];
-			i++;
+			if (tmp->dev_id > ind)
+				ind = tmp->dev_id;
 		}
-		free(*queue);
+		return ind;
 	}
-	new_queue[*current_size] = id_dev;
-	*queue = new_queue;
-	*current_size = new_size;
-}
-
-void	pop_queue(int **queue, int *length, int ind_pop)
-{
-	int	i;
-	int	j;
-	int	*new_queue;
-	int	new_size;
-
-	i = 0;
-	j = 0;
-	new_size = *length - 1;
-	new_queue = malloc(new_size * sizeof(int));
-	while (i < *length)
+	// EDF
+	deadline = tmp->deadline;
+	while (tmp->next)
 	{
-		if (i != ind_pop)
-		{
-			new_queue[j] = (*queue)[i];
-			j++;
-		}
-		i++;
+		if (tmp->deadline < deadline)
+			ind = tmp->dev_id;
 	}
-	free(*queue);
-	*queue = new_queue;
-	*length = new_size;
+	return (ind);
 }
 
-void	print_queue(int *queue, int length)
-{
-	int	i;
-
-	i = 0;
-	while (i < length - 1)
-	{
-		printf("%d, ", queue[i]);
-		i++;
-	}
-	printf("%d\n", queue[i]);
-}
+// void popQueue(t_node **queue, int indPop)
+// {
+// 	t_node *tmp;
+// 
+// 	while (tmp->dev_id != indPop)
+// 		tmp = tmp->next
+// }
