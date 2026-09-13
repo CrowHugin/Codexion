@@ -14,19 +14,19 @@
 # define QUEUE_H
 # include "../devs/dev.h"
 
-typedef struct s_node t_node;
+typedef struct s_node	t_node;
 
 typedef struct s_node
 {
 	int			dev_id;
-	t_node	*prev;
-	t_node	*next;
+	t_node		*prev;
+	t_node		*next;
 	long		deadline;
-} t_node;
+}	t_node;
 
-int in_queue(t_dongle *d, int coder_id);
-void enqueue(t_dongle *d, int coder_id, long long deadline);
-void dequeue(t_dongle *d, int coder_id);
-int is_top(t_dongle *d, int coder_id, int scheduler);
+void	enqueue(t_dongle *d, int coder_id, long long deadline);
+void	dequeue(t_dongle *d, int coder_id);
+int		in_queue(t_dongle *d, int coder_id);
+int		is_top(t_dongle *d, int coder_id, int scheduler);
 
 #endif

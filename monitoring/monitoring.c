@@ -27,7 +27,7 @@ void	monitoring(t_dev *coders)
 		while (i < total_coders)
 		{
 			if (coders[i].state == STATE_BURNOUT
-					|| coders[i].state == STATE_FINNISH)
+				|| coders[i].state == STATE_FINNISH)
 				done++;
 			i++;
 		}

@@ -40,7 +40,7 @@ void	set_up_dev(t_dev *coders,
 		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown = options[6];
 		coders[i].thread_lock = thread_lock;
-		coders[i].dongle.waiters = malloc(sizeof(t_request)* options[0]);
+		coders[i].dongle.waiters = malloc(sizeof(t_request) * options[0]);
 		coders[i].dongle.count = 0;
 		coders[i].dongle.cap = options[0];
 		coders[i].dongle.available_at = 0;
@@ -67,24 +67,23 @@ void	check_burnout(t_dev *dev, long long start_time)
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
+	t_dongle	*prev_d;
+	t_dongle	*next_d;
+	t_dongle	*a;
+	t_dongle	*b;
+	long long	deadline;
+	t_dongle	*tmp;
+
 	if (dev->state == 0)
 	{
-		t_dongle	*prev_d;
-		t_dongle	*next_d;
-		t_dongle	*a;
-		t_dongle	*b;
-		long long	deadline;
-
-
 		prev_d = &dev->all_coders[dev->prev_dev].dongle;
 		next_d = &dev->all_coders[dev->next_dev].dongle;
 		deadline = dev->last_compile_time + dev->options[1];
-
 		a = prev_d;
 		b = next_d;
 		if (a->nb > b->nb)
 		{
-			t_dongle	*tmp = a;
+			tmp = a;
 			a = b;
 			b = tmp;
 		}
@@ -94,7 +93,6 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
 		if (atomic_load(dev->keep_running) == 0)
 			return ;
-
 		take_dongle(dev, get_time() - start_time);
 		dev->state = 1;
 		dev->last_compile_time = get_time();

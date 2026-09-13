@@ -23,7 +23,7 @@ int	main(int argc, char *argv[])
 	t_dev			*coders;
 	int				*options;
 	int				*queue;
-	atomic_int				keep_running;
+	atomic_int		keep_running;
 	pthread_mutex_t	lock;
 
 	atomic_init(&keep_running, 1);
