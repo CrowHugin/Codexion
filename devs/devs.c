@@ -17,8 +17,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-void	set_up_dev(t_dev *coders,
-								int	*options,
+void	set_up_dev(t_options *options,
+								t_dev *coders,
 								int *queue,
 								atomic_int	*ptr_running,
 								pthread_mutex_t *thread_lock)
@@ -26,23 +26,21 @@ void	set_up_dev(t_dev *coders,
 	int		i;
 
 	i = 0;
-	while (i < options[0])
+	while (i < options->nbCoders)
 	{
 		coders[i].nb = i + 1;
 		coders[i].state = 0;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
-		coders[i].next_dev = (i + 1) % options[0];
-		coders[i].prev_dev = (i + options[0] - 1) % options[0];
+		coders[i].next_dev = (i + 1) % options->nbCoders;
+		coders[i].prev_dev = (i + options->nbCoders - 1) % options->nbCoders;
 		coders[i].options = options;
 		coders[i].keep_running = ptr_running;
 		coders[i].dongle.nb = i + 1;
 		coders[i].dongle.is_used = false;
-		coders[i].dongle.cooldown = options[6];
+		coders[i].dongle.cooldown = options->dongleCooldown;
 		coders[i].thread_lock = thread_lock;
-		coders[i].dongle.waiters = malloc(sizeof(t_request) * options[0]);
-		coders[i].dongle.count = 0;
-		coders[i].dongle.cap = options[0];
+		coders[i].dongle.node = malloc(sizeof(t_request) * options->nbCoders);
 		coders[i].dongle.available_at = 0;
 		coders[i].dongle.is_used = false;
 		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
@@ -55,7 +53,7 @@ void	check_burnout(t_dev *dev, long long start_time)
 {
 	if (atomic_load(dev->keep_running) == 0)
 		return ;
-	if (get_time() - dev->last_compile_time >= dev->options[1])
+	if (get_time() - dev->last_compile_time >= dev->options->timeToBurnout)
 	{
 		atomic_store(dev->keep_running, 0);
 		pthread_mutex_lock(dev->thread_lock);
@@ -67,52 +65,37 @@ void	check_burnout(t_dev *dev, long long start_time)
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
-	t_dongle	*prev_d;
-	t_dongle	*next_d;
-	t_dongle	*a;
-	t_dongle	*b;
-	long long	deadline;
-	t_dongle	*tmp;
+	// t_dongle	*prev_d;
+	// t_dongle	*next_d;
+	// long long	deadline;
 
 	if (dev->state == 0)
 	{
-		prev_d = &dev->all_coders[dev->prev_dev].dongle;
-		next_d = &dev->all_coders[dev->next_dev].dongle;
-		deadline = dev->last_compile_time + dev->options[1];
-		a = prev_d;
-		b = next_d;
-		if (a->nb > b->nb)
-		{
-			tmp = a;
-			a = b;
-			b = tmp;
-		}
-		acquire_dongle(dev, a, dev->nb, deadline, dev->options[7], start_time);
-		if (atomic_load(dev->keep_running) == 0)
-			return ;
-		acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
-		if (atomic_load(dev->keep_running) == 0)
-			return ;
-		take_dongle(dev, get_time() - start_time);
+		// prev_d = &dev->all_coders[dev->prev_dev].dongle;
+		// next_d = &dev->all_coders[dev->next_dev].dongle;
+		// deadline = dev->last_compile_time + dev->options->timeToBurnout;
+		// acquire_dongle(dev, a, dev->nb, deadline, dev->options[7], start_time);
+		// acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
+		// take_dongle(dev, get_time() - start_time);
 		dev->state = 1;
 		dev->last_compile_time = get_time();
 		printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-		usleep(dev->options[2]);
-		release_dongle(prev_d, prev_d->cooldown);
-		release_dongle(next_d, next_d->cooldown);
+		usleep(dev->options->timeToCompile);
+		// release_dongle(prev_d, prev_d->cooldown);
+		// release_dongle(next_d, next_d->cooldown);
 		(*ind)++;
 	}
 	else if (dev->state == 1)
 	{
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
-		usleep(dev->options[3]);
+		usleep(dev->options->timeToDebug);
 	}
 	else if (dev->state == 2)
 	{
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
-		usleep(dev->options[4]);
+		usleep(dev->options->timeToRefactor);
 	}
 	check_burnout(dev, start_time);
 }
@@ -127,7 +110,8 @@ void	*dev_behaivor(void *arg)
 	coders = (t_dev *)arg;
 	i = 0;
 	coders->last_compile_time = start_time;
-	while (i < coders->options[5] && atomic_load(coders->keep_running) == true)
+	while (i < coders->options->nbOfCompilesRequired
+		&& atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
 	if (atomic_load(coders->keep_running) == true)
 		coders->state = STATE_FINNISH;

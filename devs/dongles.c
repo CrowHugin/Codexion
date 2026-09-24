@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "dev.h"
-#include "../queue/queue.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>

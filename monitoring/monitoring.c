@@ -20,7 +20,7 @@ void	monitoring(t_dev *coders)
 	int	done;
 
 	done = 0;
-	total_coders = coders[0].options[0];
+	total_coders = coders[0].options->nbCoders;
 	while (true)
 	{
 		i = 0;
@@ -36,13 +36,3 @@ void	monitoring(t_dev *coders)
 		usleep(10);
 	}
 }
-	// // testing the queue
-	// int	queue_size;
-	// queue_size = 0;
-	// for (int i = 0; i < options[0]; i++)
-	// 	add_queue(&coders->queue, &queue_size, coders[i].nb);
-	// // print_queue(queue, queue_size);
-	// pop_queue(&coders->queue, &queue_size, 1);
-	// // print_queue(queue, queue_size);
-// 	return (0);
-// }

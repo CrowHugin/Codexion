@@ -16,6 +16,7 @@
 # include <pthread.h>
 # include <stdbool.h>
 # include <stdatomic.h>
+# include "../parsing/parsing.h"
 
 typedef struct s_request
 {
@@ -38,24 +39,22 @@ typedef struct dongle
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
 	long long		available_at;
-	t_request		*waiters;
+	t_request      *node;
 	int				nb;
 	int				cooldown;
 	bool			is_used;
-	int				count;
-	int				cap;
 }	t_dongle;
 
 typedef struct s_developper
 {
 	long long						last_compile_time;
+	t_options						*options;
 	struct s_developper				*all_coders;
 	pthread_mutex_t					*thread_lock;
 	atomic_int						*keep_running;
 	pthread_t						thread;
 	t_dongle						dongle;
 	int								*queue;
-	int								*options;
 	int								nb;
 	int								next_dev;
 	int								prev_dev;
@@ -64,11 +63,11 @@ typedef struct s_developper
 
 long long	get_time(void);
 void		print_devs_infos(t_dev *coders, int len);
-void		set_up_dev(t_dev *coders,
-				int *options,
-				int *queue,
-				atomic_int *ptr_running,
-				pthread_mutex_t *thread_lock);
+void	set_up_dev(t_options *options,
+								t_dev *coders,
+								int *queue,
+								atomic_int	*ptr_running,
+								pthread_mutex_t *thread_lock);
 void		*dev_behaivor(void *arg);
 void		acquire_dongle(t_dev *dev, t_dongle *d,
 				int coder_id, long long deadline,

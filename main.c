@@ -20,36 +20,27 @@
 
 int	main(int argc, char *argv[])
 {
+	t_options	options;
 	t_dev			*coders;
-	int				*options;
-	int				*queue;
 	atomic_int		keep_running;
 	pthread_mutex_t	lock;
+	int				*queue;
+
 
 	atomic_init(&keep_running, 1);
 	pthread_mutex_init(&lock, NULL);
-	options = malloc(sizeof(int) * argc + 1);
 	queue = NULL;
-	if (!options)
+	if (parsing(argc, argv, &options) != 0)
 		return (1);
-	if (parsing(argc, argv, options))
-	{
-		free(options);
-		return (1);
-	}
-	coders = malloc(sizeof(t_dev) * options[0]);
-	if (!coders)
-		return (1);
-	set_up_dev(coders, options, queue, &keep_running, &lock);
-	create_thread(coders, options[0], coders->queue);
+	coders = malloc(sizeof(t_dev) * options.nbCoders);
+	set_up_dev(&options, coders, queue, &keep_running, &lock);
+	create_thread(coders, options.nbCoders, coders->queue);
 	monitoring(coders);
-	close_threads(coders, options[0]);
-	for (int i = 0; i < options[0]; i++)
+	close_threads(coders, options.nbCoders);
+	for (int i = 0; i < options.nbCoders; i++)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
-		free(coders[i].dongle.waiters);
+		free(coders[i].dongle.node);
 	}
 	free(queue);
-	free(options);
-	free(coders);
 }
