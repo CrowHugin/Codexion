@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "parsing.h"
 
 int	get_len(int *ptr_tab)
 {
@@ -40,53 +41,56 @@ int	is_int(char	*src)
 	return (1);
 }
 
-int	parsing_helper(char *str, int *options, int *j)
+int	parsing_errors(char *args[], int nb_args)
 {
-	if (str[0] == '-' && is_int(str + 1))
+	int	i;
+
+	i = 1;
+	if (nb_args != 9)
 	{
-		printf("ERROR:\nNumbers cannot be negative\n");
+		printf("ERROR\nYou do not have 8 args\n");
 		return (1);
 	}
-	else if (!is_int(str))
+	while (i != nb_args - 1)
 	{
-		printf("ERROR:\nYou do not have 7 positive ints\n");
-		return (1);
-	}
-	else if (str[0] != '-' && is_int(str))
-	{
-		options[*j] = atoi(str);
-		(*j)++;
+		if (args[i][0] == '-' && is_int(args[i] + 1))
+		{
+			printf("ERROR:\nNumbers cannot be negative\n");
+			return (1);
+		}
+		else if (!is_int(args[i]))
+		{
+			printf("ERROR:\nYou do not have 7 positive ints\n");
+			return (1);
+		}
+		i++;
 	}
 	return (0);
 }
 
-int	parsing(int argc, char *argv[], int *options)
+int	parsing(int argc, char *argv[], t_options *opts)
 {
-	char	*last_arg;
-	int		j;
-	int		i;
+	int	res;
 
-	j = 0;
-	i = 1;
-	last_arg = argv[argc - 1];
-	if (argc != 9)
-	{
-		printf("EEROR\nYou do not have 8 args\n");
-		return (1);
-	}
-	if (strcmp(last_arg, "fifo") != 0 && strcmp(last_arg, "edf") != 0)
+	res = 0;
+	if (strcmp(argv[argc - 1], "fifo") != 0
+		&& strcmp(argv[argc - 1], "edf") != 0)
 	{
 		printf("ERROR:\nLast arg is not \"fifo\" or \"edf\"");
 		return (1);
 	}
-	while (i != argc - 1)
-	{
-		if (parsing_helper(argv[i], options, &j))
-			return (1);
-		i++;
-	}
-	options[7] = 0;
-	if (strcmp(last_arg, "edf") == 0)
-		options[7] = 1;
+	res = parsing_errors(argv, argc);
+	if (res == 1)
+		return (1);
+	opts->nbCoders = atoi(argv[1]);
+	opts->timeToBurnout = atoi(argv[2]);
+	opts->timeToCompile = atoi(argv[3]);
+	opts->timeToDebug = atoi(argv[4]);
+	opts->timeToRefactor = atoi(argv[5]);
+	opts->nbOfCompilesRequired = atoi(argv[6]);
+	opts->dongleCooldown = atoi(argv[7]);
+	opts->scheduler = "fifo";
+	if (strcmp(argv[argc - 1], "edf") == 0)
+		opts->scheduler = "edf";
 	return (0);
 }

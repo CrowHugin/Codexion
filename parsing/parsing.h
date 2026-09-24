@@ -13,8 +13,17 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-int	get_len(int	*ptr_tab);
-int	is_int(char	*src);
-int	*parsing(int argc, char *argv[], int *options);
+typedef struct s_options{
+  int nbCoders;
+  int timeToBurnout;
+  int timeToCompile;
+  int timeToDebug;
+  int timeToRefactor;
+  int nbOfCompilesRequired;
+  int dongleCooldown;
+  char  *scheduler;
+} t_options;
+
+int parsing(int argc, char *argv[], t_options *opts);
 
 #endif
