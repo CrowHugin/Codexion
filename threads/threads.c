@@ -14,12 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	create_thread(t_dev *coders, int len, int *queue)
+void	create_thread(t_dev *coders, int len)
 {
 	int	i;
 	int	res;
 
-	(void)queue;
 	i = 0;
 	while (i < len)
 	{

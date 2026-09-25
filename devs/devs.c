@@ -19,7 +19,7 @@
 
 void	set_up_dev(t_options *options,
 								t_dev *coders,
-								int *queue,
+								t_node *queue,
 								atomic_int	*ptr_running,
 								pthread_mutex_t *thread_lock)
 {

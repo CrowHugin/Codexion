@@ -13,34 +13,54 @@
 #include "parsing/parsing.h"
 #include "monitoring/monitoring.h"
 #include "threads/threads.h"
+#include "queue/queue.h"
 #include "devs/dev.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdatomic.h>
 
-int	main(int argc, char *argv[])
+int setup(t_dev **coders, t_node **queue, t_options options)
 {
-	t_options	options;
-	t_dev			*coders;
-	atomic_int		keep_running;
-	pthread_mutex_t	lock;
-	int				*queue;
-
-
-	atomic_init(&keep_running, 1);
-	pthread_mutex_init(&lock, NULL);
-	queue = NULL;
-	if (parsing(argc, argv, &options) != 0)
-		return (1);
 	coders = malloc(sizeof(t_dev) * options.nbCoders);
-	set_up_dev(&options, coders, queue, &keep_running, &lock);
-	create_thread(coders, options.nbCoders, coders->queue);
-	monitoring(coders);
-	close_threads(coders, options.nbCoders);
-	for (int i = 0; i < options.nbCoders; i++)
+	queue = malloc(sizeof(t_node) * options.nbCoders);
+  if (!coders || !queue)
+  {
+    free(coders);
+    free(queue);
+    return (1);
+  }
+  return (0);
+}
+
+void  close(t_options *options, t_dev *coders, t_node *queue)
+{
+	close_threads(coders, options->nbCoders);
+	for (int i = 0; i < options->nbCoders; i++)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
 		free(coders[i].dongle.node);
 	}
+  free(coders);
 	free(queue);
+}
+
+int	main(int argc, char *argv[])
+{
+	t_options	options;
+	t_dev			*coders;
+	t_node		*queue;
+	atomic_int		keep_running;
+	pthread_mutex_t	lock;
+
+
+	atomic_init(&keep_running, 1);
+	pthread_mutex_init(&lock, NULL);
+	if (parsing(argc, argv, &options) != 0)
+		return (1);
+  if (setup(&coders, &queue, options) != 0)
+    return (1);
+	set_up_dev(&options, coders, queue, &keep_running, &lock);
+	create_thread(coders, options.nbCoders);
+	monitoring(coders);
+  close(&options, coders, queue);
 }
