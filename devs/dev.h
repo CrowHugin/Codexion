@@ -19,13 +19,6 @@
 # include "../parsing/parsing.h"
 # include "../queue/queue.h"
 
-typedef struct s_request
-{
-	long long	arrival;
-	long long	deadline;
-	int			dev_id;
-}	t_request;
-
 enum e_state
 {
 	STATE_COMPILE,
@@ -40,7 +33,6 @@ typedef struct dongle
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
 	long long		available_at;
-	t_request      *node;
 	int				nb;
 	int				cooldown;
 	bool			is_used;

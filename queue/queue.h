@@ -19,7 +19,6 @@ typedef struct s_node	t_node;
 typedef struct s_node
 {
 	int			dev_id;
-	t_node		*prev;
 	t_node		*next;
 	long		deadline;
 }	t_node;
