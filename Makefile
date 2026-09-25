@@ -1,7 +1,7 @@
 CC = cc
 OPTIONS = -Wall -Werror -Wextra -pthread
 SOURCES = main.c \
-					parsing/*.c \
+					parsing/parsing.c \
 					devs/devs.c \
 					devs/devs_utils.c \
 					devs/dongles.c \
