@@ -10,51 +10,124 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "queue.h"
 #include "../devs/dev.h"
 #include <stdlib.h>
 
-int is_in_queue(t_node *queue, int coder_id)
-{
-  t_node *tmp;
-
-  tmp = queue;
-  while (tmp)
-  {
-    if (tmp->dev_id == coder_id)
-      return (1);
-    tmp = tmp->next;
-  }
-  return (0);
-}
-
-t_node  *new_node(t_node **queue, int coder_id, t_dev coders)
+t_node  *new_node(t_node **queue, int coder_id, t_dev *coders)
 {
   t_dev coder;
-  t_node  *new_node;
+  t_node  *node;
+  t_node  *tmp;
   int deadline;
 
-  coder = coders.all_coders[coder_id];
-  deadline = coder.last_compile_time + coder.options->timeToBurnout;
-  new_node = (t_node *)malloc(sizeof(t_node));
-  if (!new_node)
+  if (!queue || !coders)
     return (NULL);
-  new_node->dev_id = coder_id;
-  new_node->next = NULL;
-  new_node->deadline = deadline;
-}
 
-int add_to_queue(t_node **queue, t_node *node, int coder_id)
-{
-  t_node *tmp;
+  node = (t_node *)malloc(sizeof(t_node));
+  if (!node)
+    return (NULL);
 
-  if (is_in_queue(*queue, coder_id))
-    return (1);
-  if (!queue || !coder_id)
-    return (1);
+  coder = coders->all_coders[coder_id];
+  deadline = coder.last_compile_time + coder.options->timeToBurnout;
+  node->dev_id = coder_id;
+  node->coders = coders;
+  node->next = NULL;
+  node->deadline = deadline;
+
+  if (!*queue)
+  {
+    *queue = node;
+    return (node);
+  }
   tmp = *queue;
-  while (tmp)
+  while (tmp != NULL)
     tmp = tmp->next;
   tmp->next = node;
+  return node;
+}
+
+void switch_value(t_node **queue, t_node *node_1, t_node *node_2)
+{
+  int tmp_id;
+  long long tmp_deadline;
+
+  tmp_id = node_1->dev_id;
+  tmp_deadline = node_1->deadline;
+  node_1->dev_id = node_2->dev_id;
+  node_1->deadline = node_2->deadline;
+  node_2->dev_id = tmp_id;
+  node_2->deadline = tmp_deadline;
+}
+
+int switch_nodes(t_node **queue, int coder_id_1, int coder_id_2)
+{
+  t_node *tmp;
+  t_node *node_1;
+  t_node *node_2;
+
+  node_1 = NULL;
+  node_2 = NULL;
+  if (!queue || !coder_id_1 || !coder_id_2)
+    return (1);
+  tmp = *queue;
+  while (tmp != NULL)
+  {
+    if (tmp->dev_id == coder_id_1)
+      node_1 = tmp;
+    if (tmp->dev_id == coder_id_2)
+      node_2 = tmp;
+    tmp = tmp->next;
+  }
+  if (!node_1 || !node_2)
+    return (1);
+  switch_value(queue, node_1, node_2);
+}
+
+int move_to_last(t_node **queue, t_node *node)
+{
+  t_node  *curr;
+  t_node  *prev;
+  t_node  *last;
+
+  if (!queue || !*queue || !node || !node->next)
+    return (0);
+  curr = *queue;
+  prev = NULL;
+  while (curr && curr != node)
+  {
+    prev = curr;
+    curr = curr->next;
+  }
+  if (!curr)
+    return (1);
+  if (prev == NULL)
+    *queue = curr->next;
+  else 
+    prev->next = curr->next;
+  last = *queue;
+  while(last->next != NULL)
+    last = last->next;
+  last->next = curr;
+  curr->next = NULL;
+}
+
+int free_queue(t_node **queue)
+{
+  t_node  *tmp;
+  t_node  *next;
+
+  if (!queue || !*queue)
+    return (1);
+  tmp = *queue;
+  while (tmp != NULL)
+  {
+    next = tmp->next;
+    free(tmp);
+    tmp = next;
+  }
+  *queue = NULL;
+  return (0);
 }
 
 int free_node(t_node **queue, t_node node)

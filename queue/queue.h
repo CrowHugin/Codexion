@@ -19,13 +19,12 @@ typedef struct s_node	t_node;
 typedef struct s_node
 {
 	int			dev_id;
+  t_dev     *coders;
 	t_node		*next;
 	long		deadline;
 }	t_node;
 
-void	enqueue(t_dongle *d, int coder_id, long long deadline);
-void	dequeue(t_dongle *d, int coder_id);
-int		in_queue(t_dongle *d, int coder_id);
-int		is_top(t_dongle *d, int coder_id, int scheduler);
+t_node  *new_node(t_node **queue, int coder_id, t_dev *coders);
+int switch_nodes(t_node **queue, int coder_id_1, int coder_id_2);
 
 #endif

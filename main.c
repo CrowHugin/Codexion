@@ -21,13 +21,23 @@
 
 int setup(t_dev **coders, t_node **queue, t_options options)
 {
-	coders = malloc(sizeof(t_dev) * options.nbCoders);
-	queue = malloc(sizeof(t_node) * options.nbCoders);
-  if (!coders || !queue)
-  {
-    free(coders);
-    free(queue);
+  int i;
+
+  i = 0;
+	*coders = malloc(sizeof(t_dev) * options.nbCoders);
+  *queue = NULL;
+  if (!*coders)
     return (1);
+  while (i < options.nbCoders)
+  {
+    if (!new_node(queue, i, *coders))
+    {
+      // free_queue(queue);
+      free(*coders);
+      *coders = NULL;
+      return (1);
+    }
+    i++;
   }
   return (0);
 }
@@ -38,7 +48,7 @@ void  close(t_options *options, t_dev *coders, t_node *queue)
 	for (int i = 0; i < options->nbCoders; i++)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
-		free(coders[i].dongle.node);
+		free(&queue[i]);
 	}
   free(coders);
 	free(queue);
