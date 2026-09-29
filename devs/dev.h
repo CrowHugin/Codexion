@@ -19,6 +19,8 @@
 # include "../parsing/parsing.h"
 # include "../queue/queue.h"
 
+typedef struct s_node t_node;
+
 enum e_state
 {
 	STATE_COMPILE,

@@ -6,18 +6,19 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:49:27 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/09/18 16:49:31 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/09/29 17:10:21 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing/parsing.h"
-#include "monitoring/monitoring.h"
-#include "threads/threads.h"
 #include "queue/queue.h"
 #include "devs/dev.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdatomic.h>
+#include <string.h>
+// #include "monitoring/monitoring.h"
+// #include "threads/threads.h"
 
 int setup(t_dev **coders, t_node **queue, t_options options)
 {
@@ -25,6 +26,7 @@ int setup(t_dev **coders, t_node **queue, t_options options)
 
   i = 0;
 	*coders = malloc(sizeof(t_dev) * options.nbCoders);
+  memset(*coders, 0, sizeof(t_dev) * options.nbCoders);
   *queue = NULL;
   if (!*coders)
     return (1);
@@ -32,7 +34,7 @@ int setup(t_dev **coders, t_node **queue, t_options options)
   {
     if (!new_node(queue, i, *coders))
     {
-      // free_queue(queue);
+      free_queue(queue);
       free(*coders);
       *coders = NULL;
       return (1);
@@ -44,7 +46,7 @@ int setup(t_dev **coders, t_node **queue, t_options options)
 
 void  close(t_options *options, t_dev *coders, t_node *queue)
 {
-	close_threads(coders, options->nbCoders);
+	// close_threads(coders, options->nbCoders);
 	for (int i = 0; i < options->nbCoders; i++)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
@@ -54,6 +56,7 @@ void  close(t_options *options, t_dev *coders, t_node *queue)
 	free(queue);
 }
 
+#include <stdio.h>
 int	main(int argc, char *argv[])
 {
 	t_options	options;
@@ -70,7 +73,16 @@ int	main(int argc, char *argv[])
   if (setup(&coders, &queue, options) != 0)
     return (1);
 	set_up_dev(&options, coders, queue, &keep_running, &lock);
+  t_node  *tmp = queue;
+  while (tmp != NULL)
+  {
+    printf("codded index = %d\n", tmp->dev_id);
+    tmp = tmp->next;
+  }
 	create_thread(coders, options.nbCoders);
-	monitoring(coders);
-  close(&options, coders, queue);
+  free_queue(&queue);
+  free(coders);
+  pthread_mutex_destroy(&lock);
+	// monitoring(coders);
+  // close(&options, coders, queue);
 }

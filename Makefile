@@ -2,12 +2,13 @@ CC = cc
 OPTIONS = -Wall -Werror -Wextra -pthread
 SOURCES = main.c \
 					parsing/parsing.c \
+					queue/queue.c \
+					queue/queue_utils.c \
 					devs/devs.c \
 					devs/devs_utils.c \
-					# devs/dongles.c
-					threads/threads.c \
 					monitoring/monitoring.c
-					# queue/queue.c
+					# threads/threads.c \
+					# devs/dongles.c
 ARGS = 3 800 300 400 500 6 100 fifo
 NAME = codexion
 

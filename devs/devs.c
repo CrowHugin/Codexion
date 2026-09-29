@@ -40,7 +40,7 @@ void	set_up_dev(t_options *options,
 		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown = options->dongleCooldown;
 		coders[i].thread_lock = thread_lock;
-		coders[i].dongle.node = malloc(sizeof(t_request) * options->nbCoders);
+		// coders[i].dongle.node = malloc(sizeof(t_request) * options->nbCoders);
 		coders[i].dongle.available_at = 0;
 		coders[i].dongle.is_used = false;
 		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
