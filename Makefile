@@ -6,8 +6,8 @@ SOURCES = main.c \
 					queue/queue_utils.c \
 					devs/devs.c \
 					devs/devs_utils.c \
-					monitoring/monitoring.c
-					# threads/threads.c \
+					monitoring/monitoring.c \
+					threads/threads.c \
 					# devs/dongles.c
 ARGS = 3 800 300 400 500 6 100 fifo
 NAME = codexion

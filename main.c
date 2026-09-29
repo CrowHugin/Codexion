@@ -17,8 +17,8 @@
 #include <stdlib.h>
 #include <stdatomic.h>
 #include <string.h>
+#include "threads/threads.h"
 // #include "monitoring/monitoring.h"
-// #include "threads/threads.h"
 
 int setup(t_dev **coders, t_node **queue, t_options options)
 {
@@ -46,7 +46,7 @@ int setup(t_dev **coders, t_node **queue, t_options options)
 
 void  close(t_options *options, t_dev *coders, t_node *queue)
 {
-	// close_threads(coders, options->nbCoders);
+	close_threads(coders, options->nbCoders);
 	for (int i = 0; i < options->nbCoders; i++)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
