@@ -12,10 +12,10 @@
 
 #include "queue.h"
 
-void disable_node(t_node *node)
+void stop_wait(t_node *node)
 {
   if (node && node->dev_id >= 0)
-    node->dev_id = - (node->dev_id) + 1;
+    node->dev_id = - (node->dev_id) - 1;
 }
 
 int get_original_id(t_node *node)
@@ -27,8 +27,27 @@ int get_original_id(t_node *node)
   return (node->dev_id);
 }
 
-void enable_node(t_node *node)
+void enable_wait(t_node *node)
 {
   if (node && node->dev_id < 0)
-    node->dev_id = -(node->dev_id) - 1;
+    node->dev_id = -(node->dev_id) + 1;
+}
+
+void	update_node_deadline(t_node **queue, int coder_id,
+													long long new_deadline)
+{
+	t_node *tmp;
+
+	if (!queue || !*queue)
+			return ;
+	tmp = *queue;
+	while (tmp)
+	{
+			if (tmp->dev_id == -(coder_id))
+			{
+					tmp->deadline = new_deadline;
+					break ;
+			}
+			tmp = tmp->next;
+	}
 }

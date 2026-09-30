@@ -65,25 +65,31 @@ void	check_burnout(t_dev *dev, long long start_time)
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
-	// t_dongle	*prev_d;
-	// t_dongle	*next_d;
-	// long long	deadline;
+	t_node	*tmp;
 
+	tmp = dev->queue;
 	if (dev->state == 0)
 	{
-		// prev_d = &dev->all_coders[dev->prev_dev].dongle;
-		// next_d = &dev->all_coders[dev->next_dev].dongle;
-		// deadline = dev->last_compile_time + dev->options->timeToBurnout;
-		// acquire_dongle(dev, a, dev->nb, deadline, dev->options[7], start_time);
-		// acquire_dongle(dev, b, dev->nb, deadline, dev->options[7], start_time);
-		// take_dongle(dev, get_time() - start_time);
-		dev->state = 1;
-		dev->last_compile_time = get_time();
-		printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-		usleep(dev->options->timeToCompile);
-		// release_dongle(prev_d, prev_d->cooldown);
-		// release_dongle(next_d, next_d->cooldown);
-		(*ind)++;
+		while (tmp != NULL && tmp->dev_id != dev->nb
+											 && tmp->dev_id != -dev->nb
+											 && tmp->dev_id != -(dev->nb) - 1)
+			tmp = tmp->next;
+		if (!tmp)
+			return ;
+		if (take_dongle(dev, start_time) == 1)
+		{
+			enable_wait(tmp);
+			usleep(1000);
+		}
+		else 
+		{
+			dev->state = 1;
+			dev->last_compile_time = get_time();
+			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
+			usleep(dev->options->timeToCompile);
+			release_dongles(dev);
+			(*ind)++;
+		}
 	}
 	else if (dev->state == 1)
 	{
@@ -97,7 +103,7 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options->timeToRefactor);
 	}
-	check_burnout(dev, start_time);
+	//check_burnout(dev, start_time);
 }
 
 void	*dev_behaivor(void *arg)

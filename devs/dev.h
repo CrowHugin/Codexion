@@ -67,7 +67,7 @@ void		*dev_behaivor(void *arg);
 void		acquire_dongle(t_dev *dev, t_dongle *d,
 				int coder_id, long long deadline,
 				int sched, long long start_time);
-void		release_dongle(t_dongle *d, int cooldown);
-void		take_dongle(t_dev *coders, long long time);
+void	release_dongles(t_dev *coder);
+int	take_dongle(t_dev *coder, long long start);
 void		check_burnout(t_dev *dev, long long start_time);
 #endif

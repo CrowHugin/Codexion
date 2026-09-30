@@ -46,17 +46,19 @@ int setup(t_dev **coders, t_node **queue, t_options options)
 
 void  close(t_options *options, t_dev *coders, t_node *queue)
 {
+	int i;
+
+	i = 0;
 	close_threads(coders, options->nbCoders);
-	for (int i = 0; i < options->nbCoders; i++)
+	while (i < options->nbCoders)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
-		free(&queue[i]);
+		i++;
 	}
   free(coders);
-	free(queue);
+	free_queue(&queue);
 }
 
-#include <stdio.h>
 int	main(int argc, char *argv[])
 {
 	t_options	options;
@@ -73,16 +75,7 @@ int	main(int argc, char *argv[])
   if (setup(&coders, &queue, options) != 0)
     return (1);
 	set_up_dev(&options, coders, queue, &keep_running, &lock);
-  t_node  *tmp = queue;
-  while (tmp != NULL)
-  {
-    printf("codded index = %d\n", tmp->dev_id);
-    tmp = tmp->next;
-  }
 	create_thread(coders, options.nbCoders);
-  free_queue(&queue);
-  free(coders);
-  pthread_mutex_destroy(&lock);
 	// monitoring(coders);
-  // close(&options, coders, queue);
+  close(&options, coders, queue);
 }
