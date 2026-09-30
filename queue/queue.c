@@ -116,19 +116,17 @@ int is_top(t_node **queue, int coder_id, t_options *options)
 {
     t_node  *curr;
     t_node  *best_node;
-    int     target_id;
 
     if (!queue || !*queue)
         return (0);
     curr = *queue;
     best_node = NULL;
-    target_id = -coder_id;
     if (strcmp(options->scheduler, "fifo") == 0)
     {
         while (curr)
         {
             if (curr->dev_id < 0)
-                return (curr->dev_id == target_id);
+                return (curr->dev_id == -coder_id);
             curr = curr->next;
         }
         return (0);
@@ -149,7 +147,7 @@ int is_top(t_node **queue, int coder_id, t_options *options)
         }
 
         if (best_node)
-            return (best_node->dev_id == target_id);
+            return (best_node->dev_id == -coder_id);
     }
     return (0);
 }
