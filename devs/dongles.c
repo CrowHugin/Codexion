@@ -24,9 +24,6 @@ int	take_dongle(t_dev *coder, long long start)
 	long long	time;
 
 	pthread_mutex_lock(coder->thread_lock);
-	update_node_deadline(&coder->queue, coder->nb,
-											 coder->last_compile_time + 
-											coder->options->timeToBurnout);
 	if (!is_top(&coder->queue, coder->nb, coder->options))
 	{
 			pthread_mutex_unlock(coder->thread_lock);
@@ -72,6 +69,7 @@ void	release_dongles(t_dev *coder)
 	t_dev	*prev_dev;
 	t_dev	*first;
 	t_dev	*second;
+  t_node  *curr;
 	long long cooldown;
 
 	cooldown = coder->options->dongleCooldown;
@@ -95,4 +93,12 @@ void	release_dongles(t_dev *coder)
 	prev_dev->dongle.available_at = get_time() + cooldown;
 	pthread_mutex_unlock(&second->dongle.mutex);
 	pthread_mutex_unlock(&first->dongle.mutex);
+  pthread_mutex_lock(coder->thread_lock);
+  curr = coder->queue;
+  while (curr)
+  {
+    pthread_cond_signal(&curr->cond);
+    curr = curr->next;
+  }
+  pthread_mutex_unlock(coder->thread_lock);
 }

@@ -18,7 +18,7 @@
 #include <stdatomic.h>
 #include <string.h>
 #include "threads/threads.h"
-// #include "monitoring/monitoring.h"
+#include "monitoring/monitoring.h"
 
 int setup(t_dev **coders, t_node **queue, t_options options)
 {
@@ -66,6 +66,7 @@ int	main(int argc, char *argv[])
 	t_node		*queue;
 	atomic_int		keep_running;
 	pthread_mutex_t	lock;
+  pthread_t monitoring_thread;
 
 
 	atomic_init(&keep_running, 1);
@@ -76,6 +77,8 @@ int	main(int argc, char *argv[])
     return (1);
 	set_up_dev(&options, coders, queue, &keep_running, &lock);
 	create_thread(coders, options.nbCoders);
-	// monitoring(coders);
+  pthread_create(&monitoring_thread, NULL, monitoring_routine, (void *)coders);
+  pthread_join(monitoring_thread, NULL);
   close(&options, coders, queue);
+  pthread_mutex_destroy(&lock);
 }

@@ -33,6 +33,7 @@ t_node  *new_node(t_node **queue, int coder_id, t_dev *coders)
   {
     dev = coders[coder_id - 1];
 		deadline = dev.last_compile_time + dev.options->timeToBurnout;
+    pthread_cond_init(&node->cond, NULL);
   }
 	else
 		deadline = 0;
@@ -58,7 +59,7 @@ int move_to_last(t_node **queue, t_node *node)
   t_node  *prev;
   t_node  *last;
 
-  if (!queue || !*queue || !node || !node->next)
+  if (!queue || !*queue || !node || (*queue)->next == NULL)
     return (0);
   curr = *queue;
   prev = NULL;
@@ -69,6 +70,8 @@ int move_to_last(t_node **queue, t_node *node)
   }
   if (!curr)
     return (1);
+  if (curr->next == NULL)
+    return (0);
   if (prev == NULL)
     *queue = curr->next;
   else 
@@ -92,27 +95,11 @@ int free_queue(t_node **queue)
   while (tmp != NULL)
   {
     next = tmp->next;
+    pthread_cond_destroy(&tmp->cond);
     free(tmp);
     tmp = next;
   }
   *queue = NULL;
-  return (0);
-}
-
-int free_node(t_node **queue, t_node node)
-{
-  t_node  *tmp;
-
-  tmp = *queue;
-  while (tmp)
-  {
-    if (tmp->dev_id == node.dev_id)
-    {
-      tmp->dev_id = -1;
-      tmp->next = NULL;
-    }
-    tmp = tmp->next;
-  }
   return (0);
 }
 

@@ -9,7 +9,7 @@ SOURCES = main.c \
 					monitoring/monitoring.c \
 					threads/threads.c \
 					devs/dongles.c
-ARGS = 3 800 300 400 500 6 100 edf
+ARGS = 3 800 300 400 500 6 100 fifo
 NAME = codexion
 
 all: build

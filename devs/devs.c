@@ -47,28 +47,16 @@ void	set_up_dev(t_options *options,
 	}
 }
 
-void	check_burnout(t_dev *dev, long long start_time)
-{
-	if (atomic_load(dev->keep_running) == 0)
-		return ;
-	if (get_time() - dev->last_compile_time >= dev->options->timeToBurnout)
-	{
-		atomic_store(dev->keep_running, 0);
-		pthread_mutex_lock(dev->thread_lock);
-		dev->state = STATE_BURNOUT;
-		printf("%llu %d burned out\n", get_time() - start_time, dev->nb);
-		pthread_mutex_unlock(dev->thread_lock);
-	}
-}
-
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	t_node	*tmp;
+  long long target_ms;
+  struct timespec ts;
 
 	tmp = dev->queue;
   while (tmp != NULL && tmp->dev_id != dev->nb
                      && tmp->dev_id != -dev->nb
-                     && tmp->dev_id != -(dev->nb) - 1)
+                     && tmp->dev_id != -dev->nb)
     tmp = tmp->next;
   if (!tmp)
     return ;
@@ -76,15 +64,25 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 	{
 		if (take_dongle(dev, start_time) == 1)
 		{
-			usleep(1000);
+      pthread_mutex_lock(dev->thread_lock);
+      if (atomic_load(dev->keep_running) == 1)
+      {
+        target_ms = get_time() + 1;
+        ts.tv_sec = target_ms / 1000;
+        ts.tv_nsec = (target_ms % 1000) * 100000LL;
+        pthread_cond_timedwait(&tmp->cond, dev->thread_lock, &ts);
+      }
+      pthread_mutex_unlock(dev->thread_lock);
 		}
 		else 
 		{
-      pthread_mutex_lock(dev->thread_lock);
-			enable_wait(tmp);
-      pthread_mutex_unlock(dev->thread_lock);
 			dev->state = 1;
 			dev->last_compile_time = get_time();
+      pthread_mutex_lock(dev->thread_lock);
+			enable_wait(tmp);
+      update_node_deadline(&dev->queue, dev->nb, dev->last_compile_time + 
+          dev->options->timeToBurnout);
+      pthread_mutex_unlock(dev->thread_lock);
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
 			usleep(dev->options->timeToCompile);
 			release_dongles(dev);
@@ -104,9 +102,9 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		usleep(dev->options->timeToRefactor);
     pthread_mutex_lock(dev->thread_lock);
     stop_wait(tmp);
+    move_to_last(&dev->queue, tmp);
     pthread_mutex_unlock(dev->thread_lock);
 	}
-	//check_burnout(dev, start_time);
 }
 
 void	*dev_behaivor(void *arg)
@@ -125,4 +123,5 @@ void	*dev_behaivor(void *arg)
 	if (atomic_load(coders->keep_running) == true)
 		coders->state = STATE_FINNISH;
 	return (NULL);
+	//check_burnout(dev, start_time);
 }
