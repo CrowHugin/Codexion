@@ -19,7 +19,7 @@
 # include "../parsing/parsing.h"
 # include "../queue/queue.h"
 
-typedef struct s_node t_node;
+typedef struct s_node	t_node;
 
 enum e_state
 {
@@ -58,16 +58,16 @@ typedef struct s_developper
 
 long long	get_time(void);
 void		print_devs_infos(t_dev *coders, int len);
-void	set_up_dev(t_options *options,
-								t_dev *coders,
-								t_node **queue,
-								atomic_int	*ptr_running,
-								pthread_mutex_t *thread_lock);
+void		set_up_dev(t_options *options,
+				t_dev *coders,
+				t_node **queue,
+				atomic_int	*ptr_running,
+				pthread_mutex_t *thread_lock);
 void		*dev_behaivor(void *arg);
 void		acquire_dongle(t_dev *dev, t_dongle *d,
 				int coder_id, long long deadline,
 				int sched, long long start_time);
-void	release_dongles(t_dev *coder);
-int	take_dongle(t_dev *coder, long long start);
+void		release_dongles(t_dev *coder);
+int			take_dongle(t_dev *coder, long long start);
 void		check_burnout(t_dev *dev, long long start_time);
 #endif

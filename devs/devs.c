@@ -50,37 +50,37 @@ void	set_up_dev(t_options *options,
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	t_node	*tmp;
-  long long target_ms;
-  struct timespec ts;
+	long long	target_ms;
+	struct timespec	ts;
 
 	tmp = *(dev->queue);
-  while (tmp != NULL && tmp->dev_id != dev->nb && tmp->dev_id != -dev->nb)
-    tmp = tmp->next;
-  if (!tmp)
-    return ;
+	while (tmp != NULL && tmp->dev_id != dev->nb && tmp->dev_id != -dev->nb)
+		tmp = tmp->next;
+	if (!tmp)
+		return ;
 	if (dev->state == 0)
 	{
 		if (take_dongle(dev, start_time) == 1)
 		{
-      pthread_mutex_lock(dev->thread_lock);
-      if (atomic_load(dev->keep_running) == 1)
-      {
-        target_ms = get_time() + 1;
-        ts.tv_sec = target_ms / 1000;
-        ts.tv_nsec = (target_ms % 1000) * 1000000LL;
-        pthread_cond_timedwait(&tmp->cond, dev->thread_lock, &ts);
-      }
-      pthread_mutex_unlock(dev->thread_lock);
+			pthread_mutex_lock(dev->thread_lock);
+			if (atomic_load(dev->keep_running) == 1)
+			{
+				target_ms = get_time() + 1;
+				ts.tv_sec = target_ms / 1000;
+				ts.tv_nsec = (target_ms % 1000) * 1000000LL;
+				pthread_cond_timedwait(&tmp->cond, dev->thread_lock, &ts);
+			}
+			pthread_mutex_unlock(dev->thread_lock);
 		}
-		else 
+		else
 		{
 			pthread_mutex_lock(dev->thread_lock);
 			dev->state = 1;
 			dev->last_compile_time = get_time();
 			enable_wait(tmp);
-      update_node_deadline(dev->queue, dev->nb, dev->last_compile_time + 
-          dev->options->timeToBurnout);
-      pthread_mutex_unlock(dev->thread_lock);
+			update_node_deadline(dev->queue, dev->nb, dev->last_compile_time
+				+ dev->options->timeToBurnout);
+			pthread_mutex_unlock(dev->thread_lock);
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
 			usleep(dev->options->timeToCompile);
 			release_dongles(dev);
@@ -89,21 +89,21 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 	}
 	else if (dev->state == 1)
 	{
-    pthread_mutex_lock(dev->thread_lock);
+		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
-    pthread_mutex_unlock(dev->thread_lock);
+		pthread_mutex_unlock(dev->thread_lock);
 		usleep(dev->options->timeToDebug);
 	}
 	else if (dev->state == 2)
 	{
-    pthread_mutex_lock(dev->thread_lock);
+		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options->timeToRefactor);
-    stop_wait(tmp);
-    move_to_last(dev->queue, tmp);
-    pthread_mutex_unlock(dev->thread_lock);
+		stop_wait(tmp);
+		move_to_last(dev->queue, tmp);
+		pthread_mutex_unlock(dev->thread_lock);
 	}
 }
 
@@ -116,15 +116,15 @@ void	*dev_behaivor(void *arg)
 	start_time = get_time();
 	coders = (t_dev *)arg;
 	i = 0;
-  pthread_mutex_lock(coders->thread_lock);
+	pthread_mutex_lock(coders->thread_lock);
 	coders->last_compile_time = start_time;
-  pthread_mutex_unlock(coders->thread_lock);
+	pthread_mutex_unlock(coders->thread_lock);
 	while (i < coders->options->nbOfCompilesRequired
 		&& atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
-  pthread_mutex_lock(coders->thread_lock);
+	pthread_mutex_lock(coders->thread_lock);
 	if (atomic_load(coders->keep_running) == true)
 		coders->state = STATE_FINNISH;
-  pthread_mutex_unlock(coders->thread_lock);
+	pthread_mutex_unlock(coders->thread_lock);
 	return (NULL);
 }
