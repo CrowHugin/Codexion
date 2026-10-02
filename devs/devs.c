@@ -13,7 +13,6 @@
 #include "dev.h"
 #include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
 
@@ -67,21 +66,23 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 	t_node	*tmp;
 
 	tmp = dev->queue;
+  while (tmp != NULL && tmp->dev_id != dev->nb
+                     && tmp->dev_id != -dev->nb
+                     && tmp->dev_id != -(dev->nb) - 1)
+    tmp = tmp->next;
+  if (!tmp)
+    return ;
 	if (dev->state == 0)
 	{
-		while (tmp != NULL && tmp->dev_id != dev->nb
-											 && tmp->dev_id != -dev->nb
-											 && tmp->dev_id != -(dev->nb) - 1)
-			tmp = tmp->next;
-		if (!tmp)
-			return ;
 		if (take_dongle(dev, start_time) == 1)
 		{
-			enable_wait(tmp);
 			usleep(1000);
 		}
 		else 
 		{
+      pthread_mutex_lock(dev->thread_lock);
+			enable_wait(tmp);
+      pthread_mutex_unlock(dev->thread_lock);
 			dev->state = 1;
 			dev->last_compile_time = get_time();
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
@@ -101,6 +102,9 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options->timeToRefactor);
+    pthread_mutex_lock(dev->thread_lock);
+    stop_wait(tmp);
+    pthread_mutex_unlock(dev->thread_lock);
 	}
 	//check_burnout(dev, start_time);
 }

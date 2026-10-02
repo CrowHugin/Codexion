@@ -32,7 +32,7 @@ int	take_dongle(t_dev *coder, long long start)
 			pthread_mutex_unlock(coder->thread_lock);
 			return (1);
 	}
-    pthread_mutex_unlock(coder->thread_lock);
+  pthread_mutex_unlock(coder->thread_lock);
 	time = get_time();
 	next_dev = &coder->all_coders[coder->next_dev];
 	prev_dev = &coder->all_coders[coder->prev_dev];
@@ -70,18 +70,29 @@ void	release_dongles(t_dev *coder)
 {
 	t_dev	*next_dev;
 	t_dev	*prev_dev;
+	t_dev	*first;
+	t_dev	*second;
 	long long cooldown;
 
 	cooldown = coder->options->dongleCooldown;
-
 	next_dev = &coder->all_coders[coder->next_dev];
 	prev_dev = &coder->all_coders[coder->prev_dev];
-	pthread_mutex_lock(&next_dev->dongle.mutex);
-	pthread_mutex_lock(&prev_dev->dongle.mutex);
+	if (next_dev->nb < prev_dev->nb)
+	{
+		first = next_dev;
+		second = prev_dev;
+	}
+	else
+	{
+		first = prev_dev;
+		second = next_dev;
+	}
+	pthread_mutex_lock(&first->dongle.mutex);
+	pthread_mutex_lock(&second->dongle.mutex);
 	next_dev->dongle.is_used = false;
 	prev_dev->dongle.is_used = false;
 	next_dev->dongle.available_at = get_time() + cooldown;
 	prev_dev->dongle.available_at = get_time() + cooldown;
-	pthread_mutex_unlock(&next_dev->dongle.mutex);
-	pthread_mutex_unlock(&prev_dev->dongle.mutex);
+	pthread_mutex_unlock(&second->dongle.mutex);
+	pthread_mutex_unlock(&first->dongle.mutex);
 }

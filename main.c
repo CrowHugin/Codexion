@@ -32,7 +32,7 @@ int setup(t_dev **coders, t_node **queue, t_options options)
     return (1);
   while (i < options.nbCoders)
   {
-    if (!new_node(queue, i, *coders))
+    if (!new_node(queue, i + 1, *coders))
     {
       free_queue(queue);
       free(*coders);

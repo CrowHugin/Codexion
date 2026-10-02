@@ -27,7 +27,7 @@ typedef struct s_node
 
 t_node  *new_node(t_node **queue, int coder_id, t_dev *coders);
 int switch_nodes(t_node **queue, int coder_id_1, int coder_id_2);
-void stp_wait(t_node *node);
+void stop_wait(t_node *node);
 int get_original_id(t_node *node);
 void enable_wait(t_node *node);
 int free_queue(t_node **queue);
