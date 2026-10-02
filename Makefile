@@ -14,6 +14,9 @@ NAME = codexion
 
 all: build
 
+threads: build
+	valgrind --tool=helgrind --history-level=full ./$(NAME) $(ARGS)
+
 build:
 	$(CC) $(OPTIONS) $(SOURCES) -o $(NAME)
 

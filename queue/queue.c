@@ -20,7 +20,7 @@ t_node  *new_node(t_node **queue, int coder_id, t_dev *coders)
   t_node  *node;
   t_node  *tmp;
   t_dev   dev;
-  int deadline;
+  long long deadline;
 
   if (!queue || !coders)
     return (NULL);
@@ -28,12 +28,11 @@ t_node  *new_node(t_node **queue, int coder_id, t_dev *coders)
   node = (t_node *)malloc(sizeof(t_node));
   if (!node)
     return (NULL);
-
+  pthread_cond_init(&node->cond, NULL);
 	if (coders[coder_id - 1].options)
   {
     dev = coders[coder_id - 1];
 		deadline = dev.last_compile_time + dev.options->timeToBurnout;
-    pthread_cond_init(&node->cond, NULL);
   }
 	else
 		deadline = 0;

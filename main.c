@@ -75,7 +75,7 @@ int	main(int argc, char *argv[])
 		return (1);
   if (setup(&coders, &queue, options) != 0)
     return (1);
-	set_up_dev(&options, coders, queue, &keep_running, &lock);
+	set_up_dev(&options, coders, &queue, &keep_running, &lock);
 	create_thread(coders, options.nbCoders);
   pthread_create(&monitoring_thread, NULL, monitoring_routine, (void *)coders);
   pthread_join(monitoring_thread, NULL);

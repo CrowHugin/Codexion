@@ -24,7 +24,7 @@ int	take_dongle(t_dev *coder, long long start)
 	long long	time;
 
 	pthread_mutex_lock(coder->thread_lock);
-	if (!is_top(&coder->queue, coder->nb, coder->options))
+	if (!is_top(coder->queue, coder->nb, coder->options))
 	{
 			pthread_mutex_unlock(coder->thread_lock);
 			return (1);
@@ -94,7 +94,7 @@ void	release_dongles(t_dev *coder)
 	pthread_mutex_unlock(&second->dongle.mutex);
 	pthread_mutex_unlock(&first->dongle.mutex);
   pthread_mutex_lock(coder->thread_lock);
-  curr = coder->queue;
+  curr = *(coder->queue);
   while (curr)
   {
     pthread_cond_signal(&curr->cond);

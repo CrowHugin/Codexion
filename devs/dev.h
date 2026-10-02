@@ -49,7 +49,7 @@ typedef struct s_developper
 	atomic_int						*keep_running;
 	pthread_t						thread;
 	t_dongle						dongle;
-	t_node								*queue;
+	t_node							**queue;
 	int								nb;
 	int								next_dev;
 	int								prev_dev;
@@ -60,7 +60,7 @@ long long	get_time(void);
 void		print_devs_infos(t_dev *coders, int len);
 void	set_up_dev(t_options *options,
 								t_dev *coders,
-								t_node *queue,
+								t_node **queue,
 								atomic_int	*ptr_running,
 								pthread_mutex_t *thread_lock);
 void		*dev_behaivor(void *arg);
