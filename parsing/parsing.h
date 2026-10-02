@@ -13,17 +13,18 @@
 #ifndef PARSING_H
 # define PARSING_H
 
-typedef struct s_options{
-  int nbCoders;
-  int timeToBurnout;
-  int timeToCompile;
-  int timeToDebug;
-  int timeToRefactor;
-  int nbOfCompilesRequired;
-  int dongleCooldown;
-  char  *scheduler;
-} t_options;
+typedef struct s_options
+{
+	int	nbCoders;
+	int	timeToBurnout;
+	int	timeToCompile;
+	int	timeToDebug;
+	int	timeToRefactor;
+	int	nbOfCompilesRequired;
+	int	dongleCooldown;
+	char	*scheduler;
+}	t_options;
 
-int parsing(int argc, char *argv[], t_options *opts);
+int	parsing(int argc, char *argv[], t_options *opts);
 
 #endif
