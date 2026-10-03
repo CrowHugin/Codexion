@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:49:47 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/09/18 16:49:50 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 15:20:47 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 
 void	*monitoring_routine(t_dev *coders)
 {
-	long long	now;
 	long long	start_time;
-	int				total;
-	int				i;
-	int				finished;
+	long long	now;
+	int			total;
+	int			i;
+	int			finished;
 
 	total = coders[0].options->nb_coders;
 	start_time = get_time();

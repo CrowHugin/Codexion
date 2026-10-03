@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:50:52 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/09/18 16:50:54 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 15:17:45 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 
 int	take_dongle(t_dev *coder, long long start)
 {
-	t_dev	*next_dev;
-	t_dev	*prev_dev;
-	t_dev	*first;
-	t_dev	*second;
 	long long	time;
+	t_dev		*next_dev;
+	t_dev		*prev_dev;
+	t_dev		*first;
+	t_dev		*second;
 
 	pthread_mutex_lock(coder->thread_lock);
 	if (!is_top(coder->queue, coder->nb, coder->options))
@@ -65,12 +65,12 @@ int	take_dongle(t_dev *coder, long long start)
 
 void	release_dongles(t_dev *coder)
 {
-	t_dev	*next_dev;
-	t_dev	*prev_dev;
-	t_dev	*first;
-	t_dev	*second;
-	t_node	*curr;
 	long long	cooldown;
+	t_dev		*next_dev;
+	t_dev		*prev_dev;
+	t_dev		*first;
+	t_dev		*second;
+	t_node		*curr;
 
 	cooldown = coder->options->dongle_cooldown;
 	next_dev = &coder->all_coders[coder->next_dev];

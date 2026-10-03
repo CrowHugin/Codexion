@@ -6,7 +6,7 @@
 /*   By: bastien <email>                            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 23:25:35 by bastien           #+#    #+#             */
-/*   Updated: 2026/08/29 23:27:38 by bastien          ###   ########.fr       */
+/*   Updated: 2026/10/03 15:22:20 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ typedef struct s_developper	t_dev;
 
 typedef struct s_node
 {
-	long		deadline;
-	t_dev		*coders;
-	t_node		*next;
 	pthread_cond_t	cond;
-	int			dev_id;
+	t_node			*next;
+	long			deadline;
+	t_dev			*coders;
+	int				dev_id;
 }	t_node;
 
 t_node	*new_node(t_node **queue, int coder_id, t_dev *coders);

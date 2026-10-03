@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:50:02 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/09/29 17:10:15 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 15:23:23 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@
 
 t_node	*new_node(t_node **queue, int coder_id, t_dev *coders)
 {
-	t_node	*node;
-	t_node	*tmp;
-	t_dev		dev;
 	long long	deadline;
+	t_node		*node;
+	t_node		*tmp;
+	t_dev		dev;
 
 	if (!queue || !coders)
 		return (NULL);

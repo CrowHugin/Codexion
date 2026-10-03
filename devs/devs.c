@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:50:27 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/09/18 16:50:29 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 15:19:11 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	set_up_dev(t_options *options,
 								atomic_int	*ptr_running,
 								pthread_mutex_t *thread_lock)
 {
-	int		i;
-	long long start_time;
+	long long	start_time;
+	int			i;
 
 	start_time = get_time();
 	i = 0;
@@ -52,9 +52,9 @@ void	set_up_dev(t_options *options,
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
-	t_node	*tmp;
-	long long	target_ms;
 	struct timespec	ts;
+	long long		target_ms;
+	t_node			*tmp;
 
 	tmp = *(dev->queue);
 	while (tmp != NULL && tmp->dev_id != dev->nb && tmp->dev_id != -dev->nb)
