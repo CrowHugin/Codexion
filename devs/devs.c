@@ -116,9 +116,6 @@ void	*dev_behaivor(void *arg)
 	start_time = get_time();
 	coders = (t_dev *)arg;
 	i = 0;
-	pthread_mutex_lock(coders->thread_lock);
-	coders->last_compile_time = start_time;
-	pthread_mutex_unlock(coders->thread_lock);
 	while (i < coders->options->nb_of_compiles_required
 		&& atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);

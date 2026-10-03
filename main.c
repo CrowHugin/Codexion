@@ -63,11 +63,14 @@ int	main(int argc, char *argv[])
 {
 	pthread_mutex_t		lock;
 	atomic_int			keep_running;
-	pthread_t			monitoring_thread;
 	t_options			options;
 	t_dev		*coders;
 	t_node		*queue;
+	int	i;
+	long long start_time;
 
+	i = 0;
+	start_time = get_time();
 	atomic_init(&keep_running, 1);
 	pthread_mutex_init(&lock, NULL);
 	if (parsing(argc, argv, &options) != 0)
@@ -75,10 +78,13 @@ int	main(int argc, char *argv[])
 	if (setup(&coders, &queue, options) != 0)
 		return (1);
 	set_up_dev(&options, coders, &queue, &keep_running, &lock);
+	while (i<options.nb_coders)
+	{
+		coders[i].last_compile_time = start_time;
+		i++;
+	}
 	create_thread(coders, options.nb_coders);
-	pthread_create(&monitoring_thread, NULL,
-		monitoring_routine, (void *)coders);
-	pthread_join(monitoring_thread, NULL);
+	monitoring_routine(coders);
 	close(&options, coders, queue);
 	pthread_mutex_destroy(&lock);
 }

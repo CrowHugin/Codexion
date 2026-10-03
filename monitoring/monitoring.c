@@ -14,16 +14,14 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void	*monitoring_routine(void *arg)
+void	*monitoring_routine(t_dev *coders)
 {
-	t_dev	*coders;
 	long long	now;
 	long long	start_time;
 	int				total;
 	int				i;
 	int				finished;
 
-	coders = (t_dev *)arg;
 	total = coders[0].options->nb_coders;
 	start_time = get_time();
 	while (atomic_load(coders[0].keep_running) == 1)

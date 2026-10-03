@@ -15,5 +15,5 @@
 
 # include "../devs/dev.h"
 
-void	*monitoring_routine(void *arg);
+void	*monitoring_routine(t_dev *coders);
 #endif
