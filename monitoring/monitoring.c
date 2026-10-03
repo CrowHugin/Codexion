@@ -24,7 +24,7 @@ void	*monitoring_routine(void *arg)
 	int				finished;
 
 	coders = (t_dev *)arg;
-	total = coders[0].options->nbCoders;
+	total = coders[0].options->nb_coders;
 	start_time = get_time();
 	while (atomic_load(coders[0].keep_running) == 1)
 	{
@@ -38,7 +38,7 @@ void	*monitoring_routine(void *arg)
 				&& coders[i].state != STATE_FINNISH)
 			{
 				if (now - coders[i].last_compile_time
-					>= coders[i].options->timeToBurnout)
+					>= coders[i].options->time_to_burnout)
 				{
 					coders[i].state = STATE_BURNOUT;
 					atomic_store(coders[i].keep_running, 0);

@@ -82,13 +82,13 @@ int	parsing(int argc, char *argv[], t_options *opts)
 	res = parsing_errors(argv, argc);
 	if (res == 1)
 		return (1);
-	opts->nbCoders = atoi(argv[1]);
-	opts->timeToBurnout = atoi(argv[2]);
-	opts->timeToCompile = atoi(argv[3]);
-	opts->timeToDebug = atoi(argv[4]);
-	opts->timeToRefactor = atoi(argv[5]);
-	opts->nbOfCompilesRequired = atoi(argv[6]);
-	opts->dongleCooldown = atoi(argv[7]);
+	opts->nb_coders = atoi(argv[1]);
+	opts->time_to_burnout = atoi(argv[2]);
+	opts->time_to_compile = atoi(argv[3]);
+	opts->time_to_debug = atoi(argv[4]);
+	opts->time_to_refactor = atoi(argv[5]);
+	opts->nb_of_compiles_required = atoi(argv[6]);
+	opts->dongle_cooldown = atoi(argv[7]);
 	opts->scheduler = "fifo";
 	if (strcmp(argv[argc - 1], "edf") == 0)
 		opts->scheduler = "edf";

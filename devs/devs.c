@@ -25,19 +25,19 @@ void	set_up_dev(t_options *options,
 	int		i;
 
 	i = 0;
-	while (i < options->nbCoders)
+	while (i < options->nb_coders)
 	{
 		coders[i].nb = i + 1;
 		coders[i].state = 0;
 		coders[i].all_coders = coders;
 		coders[i].queue = queue;
-		coders[i].next_dev = (i + 1) % options->nbCoders;
-		coders[i].prev_dev = (i + options->nbCoders - 1) % options->nbCoders;
+		coders[i].next_dev = (i + 1) % options->nb_coders;
+		coders[i].prev_dev = (i + options->nb_coders - 1) % options->nb_coders;
 		coders[i].options = options;
 		coders[i].keep_running = ptr_running;
 		coders[i].dongle.nb = i + 1;
 		coders[i].dongle.is_used = false;
-		coders[i].dongle.cooldown = options->dongleCooldown;
+		coders[i].dongle.cooldown = options->dongle_cooldown;
 		coders[i].thread_lock = thread_lock;
 		coders[i].dongle.available_at = 0;
 		coders[i].dongle.is_used = false;
@@ -79,10 +79,10 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 			dev->last_compile_time = get_time();
 			enable_wait(tmp);
 			update_node_deadline(dev->queue, dev->nb, dev->last_compile_time
-				+ dev->options->timeToBurnout);
+				+ dev->options->time_to_burnout);
 			pthread_mutex_unlock(dev->thread_lock);
 			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-			usleep(dev->options->timeToCompile);
+			usleep(dev->options->time_to_compile);
 			release_dongles(dev);
 			(*ind)++;
 		}
@@ -93,14 +93,14 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		dev->state = 2;
 		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
 		pthread_mutex_unlock(dev->thread_lock);
-		usleep(dev->options->timeToDebug);
+		usleep(dev->options->time_to_debug);
 	}
 	else if (dev->state == 2)
 	{
 		pthread_mutex_lock(dev->thread_lock);
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
-		usleep(dev->options->timeToRefactor);
+		usleep(dev->options->time_to_refactor);
 		stop_wait(tmp);
 		move_to_last(dev->queue, tmp);
 		pthread_mutex_unlock(dev->thread_lock);
@@ -119,7 +119,7 @@ void	*dev_behaivor(void *arg)
 	pthread_mutex_lock(coders->thread_lock);
 	coders->last_compile_time = start_time;
 	pthread_mutex_unlock(coders->thread_lock);
-	while (i < coders->options->nbOfCompilesRequired
+	while (i < coders->options->nb_of_compiles_required
 		&& atomic_load(coders->keep_running) == true)
 		change_state(coders, start_time, &i);
 	pthread_mutex_lock(coders->thread_lock);

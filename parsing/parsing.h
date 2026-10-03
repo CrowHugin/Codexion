@@ -15,13 +15,13 @@
 
 typedef struct s_options
 {
-	int	nbCoders;
-	int	timeToBurnout;
-	int	timeToCompile;
-	int	timeToDebug;
-	int	timeToRefactor;
-	int	nbOfCompilesRequired;
-	int	dongleCooldown;
+	int	nb_coders;
+	int	time_to_burnout;
+	int	time_to_compile;
+	int	time_to_debug;
+	int	time_to_refactor;
+	int	nb_of_compiles_required;
+	int	dongle_cooldown;
 	char	*scheduler;
 }	t_options;
 

@@ -25,12 +25,12 @@ int	setup(t_dev **coders, t_node **queue, t_options options)
 	int	i;
 
 	i = 0;
-	*coders = malloc(sizeof(t_dev) * options.nbCoders);
-	memset(*coders, 0, sizeof(t_dev) * options.nbCoders);
+	*coders = malloc(sizeof(t_dev) * options.nb_coders);
+	memset(*coders, 0, sizeof(t_dev) * options.nb_coders);
 	*queue = NULL;
 	if (!*coders)
 		return (1);
-	while (i < options.nbCoders)
+	while (i < options.nb_coders)
 	{
 		if (!new_node(queue, i + 1, *coders))
 		{
@@ -49,8 +49,8 @@ void	close(t_options *options, t_dev *coders, t_node *queue)
 	int	i;
 
 	i = 0;
-	close_threads(coders, options->nbCoders);
-	while (i < options->nbCoders)
+	close_threads(coders, options->nb_coders);
+	while (i < options->nb_coders)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
 		i++;
@@ -61,12 +61,12 @@ void	close(t_options *options, t_dev *coders, t_node *queue)
 
 int	main(int argc, char *argv[])
 {
-	t_options	options;
+	pthread_mutex_t		lock;
+	atomic_int			keep_running;
+	pthread_t			monitoring_thread;
+	t_options			options;
 	t_dev		*coders;
 	t_node		*queue;
-	pthread_mutex_t	lock;
-	atomic_int	keep_running;
-	pthread_t	monitoring_thread;
 
 	atomic_init(&keep_running, 1);
 	pthread_mutex_init(&lock, NULL);
@@ -75,7 +75,7 @@ int	main(int argc, char *argv[])
 	if (setup(&coders, &queue, options) != 0)
 		return (1);
 	set_up_dev(&options, coders, &queue, &keep_running, &lock);
-	create_thread(coders, options.nbCoders);
+	create_thread(coders, options.nb_coders);
 	pthread_create(&monitoring_thread, NULL,
 		monitoring_routine, (void *)coders);
 	pthread_join(monitoring_thread, NULL);

@@ -31,7 +31,7 @@ t_node	*new_node(t_node **queue, int coder_id, t_dev *coders)
 	if (coders[coder_id - 1].options)
 	{
 		dev = coders[coder_id - 1];
-		deadline = dev.last_compile_time + dev.options->timeToBurnout;
+		deadline = dev.last_compile_time + dev.options->time_to_burnout;
 	}
 	else
 		deadline = 0;

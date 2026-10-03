@@ -72,7 +72,7 @@ void	release_dongles(t_dev *coder)
 	t_node	*curr;
 	long long	cooldown;
 
-	cooldown = coder->options->dongleCooldown;
+	cooldown = coder->options->dongle_cooldown;
 	next_dev = &coder->all_coders[coder->next_dev];
 	prev_dev = &coder->all_coders[coder->prev_dev];
 	if (next_dev->nb < prev_dev->nb)
