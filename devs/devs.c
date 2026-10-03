@@ -23,7 +23,9 @@ void	set_up_dev(t_options *options,
 								pthread_mutex_t *thread_lock)
 {
 	int		i;
+	long long start_time;
 
+	start_time = get_time();
 	i = 0;
 	while (i < options->nb_coders)
 	{
@@ -33,12 +35,13 @@ void	set_up_dev(t_options *options,
 		coders[i].queue = queue;
 		coders[i].next_dev = (i + 1) % options->nb_coders;
 		coders[i].prev_dev = (i + options->nb_coders - 1) % options->nb_coders;
+		coders[i].last_compile_time = start_time;
 		coders[i].options = options;
 		coders[i].keep_running = ptr_running;
+		coders[i].thread_lock = thread_lock;
 		coders[i].dongle.nb = i + 1;
 		coders[i].dongle.is_used = false;
 		coders[i].dongle.cooldown = options->dongle_cooldown;
-		coders[i].thread_lock = thread_lock;
 		coders[i].dongle.available_at = 0;
 		coders[i].dongle.is_used = false;
 		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
