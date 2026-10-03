@@ -37,5 +37,8 @@ void	update_node_deadline(t_node **queue, int coder_id,
 			long long new_deadline);
 int		is_top(t_node **queue, int coder_id, t_options *options);
 int		move_to_last(t_node **queue, t_node *node);
+int		edf(t_node **queue, int coder_id);
+int		fifo(t_node **queue, int coder_id);
+t_node	*find_node(t_node **queue, t_node *node);
 
 #endif

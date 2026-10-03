@@ -43,4 +43,23 @@ void	update_node_deadline(t_node **queue, int coder_id,
 	}
 }
 
+t_node	*find_node(t_node **queue, t_node *node)
+{
+	t_node	*curr;
+	t_node	*prev;
 
+	curr = *queue;
+	prev = NULL;
+	while (curr && curr != node)
+	{
+		prev = curr;
+		curr = curr->next;
+	}
+	if (!curr || curr->next == NULL)
+		return (NULL);
+	if (prev == NULL)
+		*queue = curr->next;
+	else
+		prev->next = curr->next;
+	return (curr);
+}

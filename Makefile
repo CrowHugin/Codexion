@@ -4,6 +4,7 @@ SOURCES = main.c \
 					parsing/parsing.c \
 					queue/queue.c \
 					queue/queue_utils.c \
+					queue/queue_utils_2.c \
 					devs/devs.c \
 					devs/devs_utils.c \
 					monitoring/monitoring.c \
