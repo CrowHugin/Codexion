@@ -42,3 +42,5 @@ void	update_node_deadline(t_node **queue, int coder_id,
 		tmp = tmp->next;
 	}
 }
+
+

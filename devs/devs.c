@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:50:27 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/10/03 15:19:11 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 16:15:10 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 			pthread_mutex_lock(dev->thread_lock);
 			dev->state = 1;
 			dev->last_compile_time = get_time();
-			enable_wait(tmp);
+			stop_wait(tmp);
 			update_node_deadline(dev->queue, dev->nb, dev->last_compile_time
 				+ dev->options->time_to_burnout);
 			pthread_mutex_unlock(dev->thread_lock);
@@ -104,7 +104,7 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 		dev->state = 0;
 		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
 		usleep(dev->options->time_to_refactor);
-		stop_wait(tmp);
+		enable_wait(tmp);
 		move_to_last(dev->queue, tmp);
 		pthread_mutex_unlock(dev->thread_lock);
 	}

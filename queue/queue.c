@@ -6,7 +6,7 @@
 /*   By: bkuntz <bkuntz@learner.42.tech>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/18 16:50:02 by bkuntz            #+#    #+#             */
-/*   Updated: 2026/10/03 15:23:23 by bkuntz           ###   ########.fr       */
+/*   Updated: 2026/10/03 16:14:22 by bkuntz           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_node	*new_node(t_node **queue, int coder_id, t_dev *coders)
 	}
 	else
 		deadline = 0;
-	node->dev_id = -(coder_id);
+	node->dev_id = coder_id;
 	node->coders = coders;
 	node->next = NULL;
 	node->deadline = deadline;
@@ -114,8 +114,8 @@ int	is_top(t_node **queue, int coder_id, t_options *options)
 	{
 		while (curr)
 		{
-			if (curr->dev_id < 0)
-				return (curr->dev_id == -coder_id);
+			if (curr->dev_id > 0)
+				return (curr->dev_id == coder_id);
 			curr = curr->next;
 		}
 		return (0);
@@ -124,7 +124,7 @@ int	is_top(t_node **queue, int coder_id, t_options *options)
 	{
 		while (curr)
 		{
-			if (curr->dev_id < 0)
+			if (curr->dev_id > 0)
 			{
 				if (!best_node)
 					best_node = curr;
@@ -134,7 +134,7 @@ int	is_top(t_node **queue, int coder_id, t_options *options)
 			curr = curr->next;
 		}
 		if (best_node)
-			return (best_node->dev_id == -coder_id);
+			return (best_node->dev_id == coder_id);
 	}
 	return (0);
 }
