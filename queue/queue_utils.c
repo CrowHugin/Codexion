@@ -12,42 +12,42 @@
 
 #include "queue.h"
 
-void stop_wait(t_node *node)
+void	stop_wait(t_node *node)
 {
-  if (node && node->dev_id > 0)
-    node->dev_id = -node->dev_id;
+	if (node && node->dev_id > 0)
+		node->dev_id = -node->dev_id;
 }
 
-int get_original_id(t_node *node)
+int	get_original_id(t_node *node)
 {
-  if (!node)
-    return (-1);
-  if (node->dev_id < 0)
-    return (-node->dev_id);
-  return (node->dev_id);
+	if (!node)
+		return (-1);
+	if (node->dev_id < 0)
+		return (-node->dev_id);
+	return (node->dev_id);
 }
 
-void enable_wait(t_node *node)
+void	enable_wait(t_node *node)
 {
-  if (node && node->dev_id < 0)
-    node->dev_id = -node->dev_id;
+	if (node && node->dev_id < 0)
+		node->dev_id = -node->dev_id;
 }
 
 void	update_node_deadline(t_node **queue, int coder_id,
 													long long new_deadline)
 {
-	t_node *tmp;
+	t_node	*tmp;
 
 	if (!queue || !*queue)
-			return ;
+		return ;
 	tmp = *queue;
 	while (tmp)
 	{
-			if (tmp->dev_id == -coder_id || tmp->dev_id == coder_id)
-			{
-					tmp->deadline = new_deadline;
-					break ;
-			}
-			tmp = tmp->next;
+		if (tmp->dev_id == -coder_id || tmp->dev_id == coder_id)
+		{
+			tmp->deadline = new_deadline;
+			break ;
+		}
+		tmp = tmp->next;
 	}
 }
