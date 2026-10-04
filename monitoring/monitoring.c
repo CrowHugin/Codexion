@@ -30,7 +30,7 @@ void	check_state(t_dev *coder, long long start_time, int *finished)
 		{
 			state = STATE_BURNOUT;
 			atomic_store(coder->keep_running, 0);
-			printf("%llu %d %s\n", get_time() - start_time, coder->nb, "burned out");
+			printf("%llu %d %s\n", time - start_time, coder->nb, "burned out");
 		}
 	}
 	else
