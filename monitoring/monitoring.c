@@ -14,45 +14,45 @@
 #include <unistd.h>
 #include <stdio.h>
 
+void	check_state(t_dev *coder, long long start_time, int *finished)
+{
+	enum e_state	state;
+	long long		time;
+
+	pthread_mutex_lock(coder->thread_lock);
+	state = coder->state;
+	if (state != STATE_BURNOUT && state != STATE_FINNISH)
+	{
+		time = get_time();
+		if (time - coder->last_compile_time >= coder->options->time_to_burnout)
+		{
+			state = STATE_BURNOUT;
+			atomic_store(coder->keep_running, 0);
+			printf("%llu %d burned out\n", time - start_time, coder->nb);
+		}
+	}
+	else
+		(*finished)++;
+	pthread_mutex_unlock(coder->thread_lock);
+}
+
 void	*monitoring_routine(t_dev *coders)
 {
 	long long	start_time;
-	long long	now;
-	int			total;
 	int			i;
 	int			finished;
 
-	total = coders[0].options->nb_coders;
 	start_time = get_time();
 	while (atomic_load(coders[0].keep_running) == 1)
 	{
 		finished = 0;
-		now = get_time();
 		i = 0;
-		while (i < total)
+		while (i < coders[0].options->nb_coders)
 		{
-			pthread_mutex_lock(coders[i].thread_lock);
-			if (coders[i].state != STATE_BURNOUT
-				&& coders[i].state != STATE_FINNISH)
-			{
-				if (now - coders[i].last_compile_time
-					>= coders[i].options->time_to_burnout)
-				{
-					coders[i].state = STATE_BURNOUT;
-					atomic_store(coders[i].keep_running, 0);
-					printf("%llu %d burned out\n",
-						now - start_time, coders[i].nb);
-					pthread_mutex_unlock(coders[i].thread_lock);
-					return (NULL);
-				}
-			}
-			if (coders[i].state == STATE_BURNOUT
-				|| coders[i].state == STATE_FINNISH)
-				finished++;
-			pthread_mutex_unlock(coders[i].thread_lock);
+			check_state(&coders[i], start_time, &finished);
 			i++;
 		}
-		if (finished == total)
+		if (finished == coders[0].options->nb_coders)
 			break ;
 		usleep(10000);
 	}

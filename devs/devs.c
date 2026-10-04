@@ -62,9 +62,11 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 {
 	t_node			*tmp;
 
+	pthread_mutex_lock(dev->thread_lock);
 	tmp = *(dev->queue);
 	while (tmp != NULL && tmp->dev_id != dev->nb && tmp->dev_id != -dev->nb)
 		tmp = tmp->next;
+	pthread_mutex_unlock(dev->thread_lock);
 	if (!tmp)
 		return ;
 	if (dev->state == 0)
