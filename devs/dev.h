@@ -60,8 +60,7 @@ long long	get_time(void);
 void		set_up_dev(t_options *options,
 				t_dev *coders,
 				t_node **queue,
-				atomic_int	*ptr_running,
-				pthread_mutex_t *thread_lock);
+				atomic_int	*ptr_running);
 void		*dev_behaivor(void *arg);
 void		release_dongles(t_dev *coder);
 int			take_dongle(t_dev *coder, long long start);

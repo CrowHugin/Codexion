@@ -12,19 +12,33 @@
 
 #include "dev.h"
 #include <pthread.h>
-#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
+
+void	set_up_dongle(t_dongle *dongle, int i, t_options *options)
+{
+	dongle->nb = i + 1;
+	dongle->cooldown = options->dongle_cooldown;
+	dongle->available_at = 0;
+	dongle->is_used = false;
+	pthread_mutex_init(&dongle->mutex, NULL);
+	pthread_cond_init(&dongle->cond, NULL);
+}
 
 void	set_up_dev(t_options *options,
 								t_dev *coders,
 								t_node **queue,
-								atomic_int	*ptr_running,
-								pthread_mutex_t *thread_lock)
+								atomic_int	*ptr_running)
 {
-	long long	start_time;
-	int			i;
+	pthread_mutex_t	*lock;
+	long long		start_time;
+	int				i;
 
+	lock = malloc(sizeof(pthread_mutex_t));
+	if (!lock)
+		return ;
+	pthread_mutex_init(lock, NULL);
 	start_time = get_time();
 	i = 0;
 	while (i < options->nb_coders)
@@ -38,14 +52,8 @@ void	set_up_dev(t_options *options,
 		coders[i].last_compile_time = start_time;
 		coders[i].options = options;
 		coders[i].keep_running = ptr_running;
-		coders[i].thread_lock = thread_lock;
-		coders[i].dongle.nb = i + 1;
-		coders[i].dongle.is_used = false;
-		coders[i].dongle.cooldown = options->dongle_cooldown;
-		coders[i].dongle.available_at = 0;
-		coders[i].dongle.is_used = false;
-		pthread_mutex_init(&coders[i].dongle.mutex, NULL);
-		pthread_cond_init(&coders[i].dongle.cond, NULL);
+		coders[i].thread_lock = lock;
+		set_up_dongle(&coders[i].dongle, i, options);
 		i++;
 	}
 }

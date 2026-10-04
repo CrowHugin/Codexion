@@ -53,7 +53,13 @@ void	close(t_options *options, t_dev *coders, t_node *queue)
 	while (i < options->nb_coders)
 	{
 		pthread_mutex_destroy(&coders[i].dongle.mutex);
+		pthread_cond_destroy(&coders[i].dongle.cond);
 		i++;
+	}
+	if (coders && options->nb_coders > 0)
+	{
+		pthread_mutex_destroy(coders[0].thread_lock);
+		free(coders[0].thread_lock);
 	}
 	free(coders);
 	free_queue(&queue);
@@ -61,21 +67,18 @@ void	close(t_options *options, t_dev *coders, t_node *queue)
 
 int	main(int argc, char *argv[])
 {
-	pthread_mutex_t		lock;
 	atomic_int			keep_running;
 	t_options			options;
 	t_dev				*coders;
 	t_node				*queue;
 
 	atomic_init(&keep_running, 1);
-	pthread_mutex_init(&lock, NULL);
 	if (parsing(argc, argv, &options) != 0)
 		return (1);
 	if (setup(&coders, &queue, options) != 0)
 		return (1);
-	set_up_dev(&options, coders, &queue, &keep_running, &lock);
+	set_up_dev(&options, coders, &queue, &keep_running);
 	create_thread(coders, options.nb_coders);
 	monitoring_routine(coders);
 	close(&options, coders, queue);
-	pthread_mutex_destroy(&lock);
 }
