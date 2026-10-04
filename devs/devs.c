@@ -52,8 +52,6 @@ void	set_up_dev(t_options *options,
 
 void	change_state(t_dev *dev, long long start_time, int *ind)
 {
-	struct timespec	ts;
-	long long		target_ms;
 	t_node			*tmp;
 
 	tmp = *(dev->queue);
@@ -64,50 +62,14 @@ void	change_state(t_dev *dev, long long start_time, int *ind)
 	if (dev->state == 0)
 	{
 		if (take_dongle(dev, start_time) == 1)
-		{
-			pthread_mutex_lock(dev->thread_lock);
-			if (atomic_load(dev->keep_running) == 1)
-			{
-				target_ms = get_time() + 1;
-				ts.tv_sec = target_ms / 1000;
-				ts.tv_nsec = (target_ms % 1000) * 1000000LL;
-				pthread_cond_timedwait(&tmp->cond, dev->thread_lock, &ts);
-			}
-			pthread_mutex_unlock(dev->thread_lock);
-		}
+			wait(dev, tmp);
 		else
-		{
-			pthread_mutex_lock(dev->thread_lock);
-			dev->state = 1;
-			dev->last_compile_time = get_time();
-			stop_wait(tmp);
-			update_node_deadline(dev->queue, dev->nb, dev->last_compile_time
-				+ dev->options->time_to_burnout);
-			pthread_mutex_unlock(dev->thread_lock);
-			printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
-			usleep(dev->options->time_to_compile);
-			release_dongles(dev);
-			(*ind)++;
-		}
+			compile(dev, tmp, ind, start_time);
 	}
 	else if (dev->state == 1)
-	{
-		pthread_mutex_lock(dev->thread_lock);
-		dev->state = 2;
-		printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
-		pthread_mutex_unlock(dev->thread_lock);
-		usleep(dev->options->time_to_debug);
-	}
+		debug(dev, start_time);
 	else if (dev->state == 2)
-	{
-		pthread_mutex_lock(dev->thread_lock);
-		dev->state = 0;
-		printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
-		usleep(dev->options->time_to_refactor);
-		enable_wait(tmp);
-		move_to_last(dev->queue, tmp);
-		pthread_mutex_unlock(dev->thread_lock);
-	}
+		refactoring(dev, start_time, tmp);
 }
 
 void	*dev_behaivor(void *arg)

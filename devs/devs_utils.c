@@ -10,38 +10,61 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <sys/time.h>
 #include "dev.h"
+#include <sys/time.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <stdio.h>
 
-void	print_base_infos(t_dev coders, int j)
+void	wait(t_dev *dev, t_node *curr)
 {
-	printf("Coder %d:\n", j + 1);
-	printf("	numbers: %d\n", coders.nb);
-	printf("	state: %d\n", coders.state);
-	printf("	running: %d\n", *coders.keep_running);
+	struct timespec	ts;
+	long long		target_ms;
+
+	pthread_mutex_lock(dev->thread_lock);
+	if (atomic_load(dev->keep_running) == 1)
+	{
+		target_ms = get_time() + 1;
+		ts.tv_sec = target_ms / 1000;
+		ts.tv_nsec = (target_ms % 1000) * 1000000LL;
+		pthread_cond_timedwait(&curr->cond, dev->thread_lock, &ts);
+	}
+	pthread_mutex_unlock(dev->thread_lock);
 }
 
-void	print_devs_infos(t_dev *coders, int len)
+void	compile(t_dev *dev, t_node *curr, int *ind, long long start_time)
 {
-	int	j;
+	pthread_mutex_lock(dev->thread_lock);
+	dev->state = 1;
+	dev->last_compile_time = get_time();
+	stop_wait(curr);
+	update_node_deadline(dev->queue, dev->nb, dev->last_compile_time
+		+ dev->options->time_to_burnout);
+	pthread_mutex_unlock(dev->thread_lock);
+	printf("%llu %d is compiling\n", get_time() - start_time, dev->nb);
+	usleep(dev->options->time_to_compile);
+	release_dongles(dev);
+	(*ind)++;
+}
 
-	j = 0;
-	printf("nb coders: %d\n", len);
-	print_base_infos(coders[j], j);
-	printf("	has_doggle right: %d\n", coders[j + 1].dongle.is_used);
-	printf("	has_doggle left: %d\n", coders[len - 1].dongle.is_used);
-	j++;
-	while (j < len - 1)
-	{
-		print_base_infos(coders[j], j);
-		printf("	has_doggle right: %d\n", coders[j + 1].dongle.is_used);
-		printf("	has_doggle left: %d\n", coders[j - 1].dongle.is_used);
-		j++;
-	}
-	print_base_infos(coders[j], j);
-	printf("	has_doggle right: %d\n", coders[0].dongle.is_used);
-	printf("	has_doggle left: %d\n", coders[j].dongle.is_used);
+void	debug(t_dev *dev, long long start_time)
+{
+	usleep(dev->options->time_to_debug);
+	pthread_mutex_lock(dev->thread_lock);
+	dev->state = 2;
+	printf("%llu %d is debugging\n", get_time() - start_time, dev->nb);
+	pthread_mutex_unlock(dev->thread_lock);
+}
+
+void	refactoring(t_dev *dev, long long start_time, t_node *curr)
+{
+	usleep(dev->options->time_to_refactor);
+	pthread_mutex_lock(dev->thread_lock);
+	printf("%llu %d is refactoring\n", get_time() - start_time, dev->nb);
+	dev->state = 0;
+	enable_wait(curr);
+	move_to_last(dev->queue, curr);
+	pthread_mutex_unlock(dev->thread_lock);
 }
 
 long long	get_time(void)
