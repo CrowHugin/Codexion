@@ -15,6 +15,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <stdio.h>
+
+void print_status(t_dev *dev, char *str, long long start_time)
+{
+    if (atomic_load(dev->keep_running) == 1)
+			printf("%llu %d %s\n", get_time() - start_time, dev->nb, str);
+}
 
 void	set_up_dongle(t_dongle *dongle, int i, t_options *options)
 {

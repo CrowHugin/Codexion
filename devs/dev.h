@@ -68,4 +68,5 @@ void		wait(t_dev *dev, t_node *curr);
 void		compile(t_dev *dev, t_node *curr, int *ind, long long start_time);
 void		debug(t_dev *dev, long long start_time);
 void		refactoring(t_dev *dev, long long start_time, t_node *curr);
+void		print_status(t_dev *dev, char *str, long long start_time);
 #endif

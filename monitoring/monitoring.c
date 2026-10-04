@@ -19,6 +19,8 @@ void	check_state(t_dev *coder, long long start_time, int *finished)
 	enum e_state	state;
 	long long		time;
 
+	if (atomic_load(coder->keep_running) == 0)
+		return ;
 	pthread_mutex_lock(coder->thread_lock);
 	state = coder->state;
 	if (state != STATE_BURNOUT && state != STATE_FINNISH)
@@ -28,7 +30,7 @@ void	check_state(t_dev *coder, long long start_time, int *finished)
 		{
 			state = STATE_BURNOUT;
 			atomic_store(coder->keep_running, 0);
-			printf("%llu %d burned out\n", time - start_time, coder->nb);
+			printf("%llu %d %s\n", get_time() - start_time, coder->nb, "burned out");
 		}
 	}
 	else
