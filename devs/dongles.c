@@ -77,6 +77,8 @@ int	take_dongle(t_dev *coder, long long start)
 	next_dev = &coder->all_coders[coder->next_dev];
 	prev_dev = &coder->all_coders[coder->prev_dev];
 	set_importance(next_dev, prev_dev, &first, &second);
+	if (first == second)
+		return (1);
 	pthread_mutex_lock(&first->dongle.mutex);
 	pthread_mutex_lock(&second->dongle.mutex);
 	status = dongle(first, second, start, coder);
@@ -97,14 +99,17 @@ void	release_dongles(t_dev *coder)
 	next_dev = &coder->all_coders[coder->next_dev];
 	prev_dev = &coder->all_coders[coder->prev_dev];
 	set_importance(next_dev, prev_dev, &first, &second);
-	pthread_mutex_lock(&first->dongle.mutex);
-	pthread_mutex_lock(&second->dongle.mutex);
-	next_dev->dongle.is_used = false;
-	prev_dev->dongle.is_used = false;
-	next_dev->dongle.available_at = get_time() + cooldown;
-	prev_dev->dongle.available_at = get_time() + cooldown;
-	pthread_mutex_unlock(&second->dongle.mutex);
-	pthread_mutex_unlock(&first->dongle.mutex);
+	if (first != second)
+	{
+		pthread_mutex_lock(&first->dongle.mutex);
+		pthread_mutex_lock(&second->dongle.mutex);
+		next_dev->dongle.is_used = false;
+		prev_dev->dongle.is_used = false;
+		next_dev->dongle.available_at = get_time() + cooldown;
+		prev_dev->dongle.available_at = get_time() + cooldown;
+		pthread_mutex_unlock(&second->dongle.mutex);
+		pthread_mutex_unlock(&first->dongle.mutex);
+	}
 	pthread_mutex_lock(coder->thread_lock);
 	send_signal(coder);
 	pthread_mutex_unlock(coder->thread_lock);

@@ -42,14 +42,14 @@ void	compile(t_dev *dev, t_node *curr, int *ind, long long start_time)
 		+ dev->options->time_to_burnout);
 	pthread_mutex_unlock(dev->thread_lock);
 	print_status(dev, "is compiling", start_time);
-	usleep(dev->options->time_to_compile);
+	usleep(dev->options->time_to_compile * 1000);
 	release_dongles(dev);
 	(*ind)++;
 }
 
 void	debug(t_dev *dev, long long start_time)
 {
-	usleep(dev->options->time_to_debug);
+	usleep(dev->options->time_to_debug * 1000);
 	pthread_mutex_lock(dev->thread_lock);
 	dev->state = 2;
 	print_status(dev, "is debugging", start_time);
@@ -58,7 +58,7 @@ void	debug(t_dev *dev, long long start_time)
 
 void	refactoring(t_dev *dev, long long start_time, t_node *curr)
 {
-	usleep(dev->options->time_to_refactor);
+	usleep(dev->options->time_to_refactor * 1000);
 	pthread_mutex_lock(dev->thread_lock);
 	print_status(dev, "is refactoring", start_time);
 	dev->state = 0;

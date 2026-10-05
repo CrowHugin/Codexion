@@ -28,9 +28,9 @@ void	check_state(t_dev *coder, long long start_time, int *finished)
 		time = get_time();
 		if (time - coder->last_compile_time >= coder->options->time_to_burnout)
 		{
-			state = STATE_BURNOUT;
+			coder->state = STATE_BURNOUT;
 			atomic_store(coder->keep_running, 0);
-			printf("%llu %d %s\n", time - start_time, coder->nb, "burned out");
+			printf("%llu %d burned out\n", time - start_time, coder->nb);
 		}
 	}
 	else
