@@ -49,22 +49,22 @@ void	compile(t_dev *dev, t_node *curr, int *ind, long long start_time)
 
 void	debug(t_dev *dev, long long start_time)
 {
-	usleep(dev->options->time_to_debug * 1000);
 	pthread_mutex_lock(dev->thread_lock);
 	dev->state = 2;
 	print_status(dev, "is debugging", start_time);
 	pthread_mutex_unlock(dev->thread_lock);
+	usleep(dev->options->time_to_debug * 1000);
 }
 
 void	refactoring(t_dev *dev, long long start_time, t_node *curr)
 {
-	usleep(dev->options->time_to_refactor * 1000);
 	pthread_mutex_lock(dev->thread_lock);
 	print_status(dev, "is refactoring", start_time);
 	dev->state = 0;
 	enable_wait(curr);
 	move_to_last(dev->queue, curr);
 	pthread_mutex_unlock(dev->thread_lock);
+	usleep(dev->options->time_to_refactor * 1000);
 }
 
 long long	get_time(void)

@@ -42,6 +42,9 @@ int	edf(t_node **queue, int coder_id)
 				best_node = curr;
 			else if (curr->deadline < best_node->deadline)
 				best_node = curr;
+			else if (curr->deadline == best_node->deadline
+				&& curr->dev_id > best_node->dev_id)
+					best_node = curr;
 		}
 		curr = curr->next;
 	}
